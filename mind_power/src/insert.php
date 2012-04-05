@@ -3,32 +3,52 @@ include("dbinfo.inc.php");
 mysql_connect("127.0.0.1",$username,$password);
 @mysql_select_db($database) or die( "Unable to select database"); 
 
-//$query = "INSERT INTO contacts VALUES ('','$first','$last','$phone','$mobile','$fax','$email','$web')";
-//mysql_query($query);
-
 $title = $_POST["title"];
 $name = $_POST["name"];
 $email = $_POST["email"];
+$id_company = $_POST["company_id"];
+$answer_ids = array();
 
-echo "Received: $title, $name, $email <br>";
+$query = "SELECT DISTINCT GROUP_BREAK FROM QUESTIONS;";
+$groups = mysql_query($query);
+while ($row = mysql_fetch_assoc($groups)) {
+	$group=$row['group_break'];
+	echo "group_break id: $group <br>";
+
+	$answer_id = $_POST['answer'+$group];
+	echo "Answer id: $answer_id";
+			
+	array_push($answer_ids, $answer_id);
+}
+
+// $selected_answers = $_POST['answer'];
+
+echo "Received: $title, $name, $email, $id_company<br>";
+print_r($answer_ids);
+echo "<br>";
 
 //Create tester record
-$query = "INSERT INTO TESTERS VALUES ('', '$title','$name','$email')";
+$query = "INSERT INTO TESTERS VALUES ('', '$id_company', $title','$name','$email')";
 $result = mysql_query($query);
 
 if ($result) {
 	echo "Tester info stored in DB<br>";
 	
-	$query = "SELECT MAX(ID) AS ID FROM TESTERS";
+	$query = "SELECT MAX(ID) AS ID FROM TESTERS WHERE EMAIL = " + $email;
 	$result = mysql_query($query);
 	
 	$id_tester=mysql_result($result,0,"id");
 	
 	echo "Current tester id is: $id_tester<br>";
+
+	$answers_created;
+	foreach ($answer_ids as $current_id) {
+		echo "current question id: " + $current_id;
+		$query = "INSERT INTO ANSWERS VALUES ('', '$current_id','$id_tester')";
+		$answers_created = mysql_query($query);
+		
+	}
 	
-	//TODO: Needs to find out a way to get the answers
-	$query = "INSERT INTO ANSWERS VALUES ('', '$id_tester','$id_tester')";
-	$answers_created = mysql_query($query);
 	
 	if ($answers_created) {
 		//All good!

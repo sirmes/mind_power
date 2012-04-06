@@ -1,18 +1,14 @@
 <?
-include("dbinfo.inc.php");
-mysql_connect("127.0.0.1",$username,$password);
-@mysql_select_db($database) or die("Unable to select database");
+include("DB.php");
+$DB = DB::Open();
 
 $query="SELECT * FROM questions";
-$questions=mysql_query($query);
-
-$num=mysql_numrows($questions); 
+$questions = $DB->qry($query); 
+$num = $DB->qry_row_num($questions);
 
 $query="SELECT ID, NAME FROM COMPANIES WHERE ACTIVE = 'A'";
-$companies=mysql_query($query);
-$num_companies=mysql_numrows($companies);
-
-mysql_close();
+$companies = $DB->qry($query);
+$num_companies = $DB->qry_row_num($companies);
 
 echo "<b><center>Database Output</center></b><br><br>";
 
@@ -22,7 +18,7 @@ echo "<b><center>Database Output</center></b><br><br>";
 Title: <input type="text" name="title"><br>
 Name: <input type="text" name="name"><br>
 E-mail: <input type="text" name="email"><br>
-Company: <select name="company_id" size="2">
+Company: <select name="company_id">
 <?
 $i=0;
 while ($i < $num_companies) {
@@ -33,7 +29,6 @@ while ($i < $num_companies) {
 	<?
 	++$i;
 }
-mysql_free_result($companies);
 ?>
 
 </select>
@@ -66,8 +61,7 @@ while ($i < $num) {
 </tr>
 <?
 ++$i;
-}
-mysql_free_result($questions); 
+} 
 ?>
 </table>
 <p>

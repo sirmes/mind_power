@@ -7,7 +7,7 @@ $companies = $DB->qry($query);
 
 $num_companies = $DB->qry_row_num($companies);
 
-echo "<b><center>Database Output</center></b><br><br>";
+echo "<b><center>Companies</center></b><br><br>";
 
 ?>
 
@@ -17,6 +17,7 @@ echo "<b><center>Database Output</center></b><br><br>";
 <tr> 
 <th><font face="Arial, Helvetica, sans-serif">Name</font></th>
 <th><font face="Arial, Helvetica, sans-serif">Active *</font></th>
+<th colspan="2"><font face="Arial, Helvetica, sans-serif"></font></th>
 </tr>
 <?
 $i=0;
@@ -27,7 +28,8 @@ while ($i < $num_companies) {
 	?>
 	<tr> 
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="text" value="<? echo "$company_name"; ?>" /></font></td>
+			<input type="text" value="<? echo "$company_name"; ?>" /></font>
+		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
 		 	<select name="company_id">
 		 		<?  
@@ -43,7 +45,12 @@ while ($i < $num_companies) {
 		 		<option <? echo "$inactive_selected"; ?> value="I">Inactive</option>
 			</select>
 		</font></td>
-			
+		<td><font face="Arial, Helvetica, sans-serif">
+			<input type="button" value="Change" /></font>
+		</td>
+				<td><font face="Arial, Helvetica, sans-serif">
+			<input type="button" value="Remove" /></font>
+		</td>
 	</tr>
 	
 	<?
@@ -51,8 +58,15 @@ while ($i < $num_companies) {
 }
 ?>
 </table>
+<hr>
+<table border="1" cellspacing="2" cellpadding="2">
+	<tr> 
+		<th><font face="Arial, Helvetica, sans-serif">Company:</font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="text" value="New company" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" /></font></th>
+	</tr>
+</table>
 <p>
 * A means = Active / I means = Inactive
 <p>
-<input type="Submit" value="Send your anwsers">
 </form>

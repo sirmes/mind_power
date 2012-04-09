@@ -37,10 +37,9 @@ while ($i < $num_companies) {
 <?//TODO:Add radios or checkbox, need to figure out how ?>
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
-<th><font face="Arial, Helvetica, sans-serif">id_category</font></th>
-<th><font face="Arial, Helvetica, sans-serif">group</font></th>
-<th><font face="Arial, Helvetica, sans-serif">question</font></th>
-<th><font face="Arial, Helvetica, sans-serif">radio</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Categories</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Groups</font></th>
+<th colspan="2" ><font face="Arial, Helvetica, sans-serif">Questions</font></th>
 </tr>
 
 <?

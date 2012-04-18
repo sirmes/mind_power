@@ -2,7 +2,7 @@
 include("../DB.php");
 $DB = DB::Open();
 
-$query="SELECT NAME, EMAIL FROM TESTERS";
+$query="SELECT ID, NAME, EMAIL FROM TESTERS ORDER BY 1 DESC";
 $testers = $DB->qry($query);
 
 $num_testers = $DB->qry_row_num($testers);
@@ -16,7 +16,7 @@ echo "<b><center>testers</center></b><br><br>";
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
 	<td><font face="Arial, Helvetica, sans-serif">
-	 	Tester name: <select name="testers_id">
+	 	Tester name: <select name="tester_id">
 					<?
 					$i=0;
 					while ($i < $num_testers) {
@@ -32,7 +32,7 @@ echo "<b><center>testers</center></b><br><br>";
 			</select>
 		</font></td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="button" value="Show report" onclick="tester_form.submit();"/></font>
+			<input type="submit" value="Show report"/></font>
 		</td>
 	</tr>
 </table>

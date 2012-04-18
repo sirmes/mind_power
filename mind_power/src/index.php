@@ -34,10 +34,10 @@ while ($i < $num_companies) {
 </select>
 
 <hr>
-<?//TODO:Add radios or checkbox, need to figure out how ?>
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
 <th><font face="Arial, Helvetica, sans-serif">Categories</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Sub categories</font></th>
 <th><font face="Arial, Helvetica, sans-serif">Groups</font></th>
 <th colspan="2" ><font face="Arial, Helvetica, sans-serif">Questions</font></th>
 </tr>
@@ -47,11 +47,13 @@ $i=0;
 while ($i < $num) {
 	$id=mysql_result($questions,$i,"id");
 	$id_category=mysql_result($questions,$i,"id_category");
+	$id_sub_category=mysql_result($questions,$i,"id_sub_category");
 	$group_break=mysql_result($questions,$i,"group_break");
 	$question=mysql_result($questions,$i,"question");
 ?>
 <tr> 
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$id_category"; ?></font></td>
+<td><font face="Arial, Helvetica, sans-serif"><? echo "$id_sub_category"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$group_break"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$question"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif">

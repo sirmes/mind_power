@@ -4,7 +4,7 @@ $DB = DB::Open();
 
 $action = $_POST['action'];
 
-echo "action: $action <br>";
+// echo "action: $action <br>";
 
 if (strcmp($action,"A") == 0) {
 	//Add
@@ -14,7 +14,7 @@ if (strcmp($action,"A") == 0) {
 	$add_sub_category_name = $_POST['add_sub_category_name'];
 	$add_sub_category_status = $_POST['add_sub_category_status'];
 
-	echo "Parameters: $add_sub_category_name, $add_sub_category_status";
+// 	echo "Parameters: $add_sub_category_name, $add_sub_category_status";
 	
 	$query="INSERT INTO SUB_CATEGORIES VALUES ('', $add_category_id ,'$add_sub_category_name', '$add_sub_category_status')";
 	$result = $DB->qry($query);

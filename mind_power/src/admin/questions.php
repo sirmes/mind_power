@@ -54,7 +54,8 @@ $query="SELECT Q.ID, Q.ID_CATEGORY, C.NAME C_NAME, Q.ID_SUB_CATEGORY, S.NAME S_N
 		"Q.ID_CATEGORY = C.ID ".
 		"AND Q.ID_SUB_CATEGORY = S.ID ".
 		"AND C.ACTIVE = 'A' ".
-		"AND S.ACTIVE = 'A'";
+		"AND S.ACTIVE = 'A'".
+		"ORDER BY Q.ANSWER_GROUP";
 $questions = $DB->qry($query);
 
 $num_questions = $DB->qry_row_num($questions);

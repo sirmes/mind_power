@@ -2,7 +2,7 @@
 include("DB.php");
 $DB = DB::Open();
 
-$query="SELECT * FROM questions_answers";
+$query="SELECT * FROM questions_answers ORDER BY answer_group";
 $questions = $DB->qry($query); 
 $num = $DB->qry_row_num($questions);
 

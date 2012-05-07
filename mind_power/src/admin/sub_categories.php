@@ -19,7 +19,7 @@ if (strcmp($action,"A") == 0) {
 	$query="INSERT INTO sub_categories VALUES ('', $add_category_id ,'$add_sub_category_name', '$add_sub_category_status')";
 	$result = $DB->qry($query);
 	
-// 	echo "Sub category added: $result";
+// 	echo "Leadership item added: $result";
 }
 else {
 	$sub_category_id = $_POST['sub_category_id'];
@@ -87,8 +87,8 @@ function setSubCategory_id(sub_category_id){
 <hr>
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
-<th><font face="Arial, Helvetica, sans-serif">Category name</font></th>
-<th><font face="Arial, Helvetica, sans-serif">Sub category Name</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Stratigic skillset</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Leadership</font></th>
 <th><font face="Arial, Helvetica, sans-serif">Status *</font></th>
 <th><font face="Arial, Helvetica, sans-serif"></font></th>
 </tr>
@@ -144,7 +144,7 @@ while ($i < $num_sub_categories) {
 <hr>
 <table border="1" cellspacing="2" cellpadding="2">
 	<tr> 
-		<th><font face="Arial, Helvetica, sans-serif">Sub category:</font></th>
+		<th><font face="Arial, Helvetica, sans-serif">Leadership:</font></th>
 		<th><font face="Arial, Helvetica, sans-serif"><select name="add_category_id">
 													<option>(select one)</option>
 													<?
@@ -156,7 +156,7 @@ while ($i < $num_sub_categories) {
 													?>
 													</select>
 		</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_sub_category_name" value="New sub category" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_sub_category_name" value="New leadership item" /></font></th>
 		<th><font face="Arial, Helvetica, sans-serif"><select name="add_sub_category_status">
 														<option value="A">Active</option>
 														<option value="I">Inactive</option>

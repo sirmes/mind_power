@@ -11,13 +11,13 @@ if (strcmp($action,"A") == 0) {
 	//echo "In add";
 	$add_category_id = $_POST['add_category_id'];
 	$add_sub_category_id = $_POST['add_sub_category_id'];
-	$add_group_break = $_POST['add_group_break'];
+	$add_answer_group = $_POST['add_answer_group'];
 	$add_question_name = $_POST['add_question_name'];
 	$add_question_status = $_POST['add_question_status'];
 
-// 	echo "Parameters: $add_category_id, $add_sub_category_id, $add_group_break, $add_question_name, $add_question_status";
+// 	echo "Parameters: $add_category_id, $add_sub_category_id, $add_answer_group, $add_question_name, $add_question_status";
 	
-	$query="INSERT INTO QUESTIONS VALUES ('', $add_category_id, $add_sub_category_id, $add_group_break, '$add_question_name')";
+	$query="INSERT INTO questions_answers VALUES ('', $add_category_id, $add_sub_category_id, $add_answer_group, '$add_question_name')";
 	$result = $DB->qry($query);
 	
 // 	echo "Question added: $result";
@@ -30,23 +30,26 @@ else {
 		//Update
 		$change_category_id = $_POST['change_category_id'.$question_id.''];
 		$change_sub_category_id = $_POST['change_sub_category_id'.$question_id.''];
-		$change_group_break = $_POST['change_group_break'.$question_id.''];
+		$change_answer_group = $_POST['change_answer_group'.$question_id.''];
 		$change_question_name = $_POST['change_question_name'.$question_id.''];
 		
-		$query="UPDATE QUESTIONS SET ID_CATEGORY=$change_category_id, ID_SUB_CATEGORY=$change_sub_category_id, ".
-				 "GROUP_BREAK=$change_group_break, QUESTION='$change_question_name' ".
+		$query="UPDATE questions_answers SET ID_CATEGORY=$change_category_id, ID_SUB_CATEGORY=$change_sub_category_id, ".
+				 "ANSWER_GROUP=$change_answer_group, QUESTION='$change_question_name' ".
 				 "WHERE ID = $question_id";
 		
 // 		echo "SQL => $query <br>";
 		
 		$result = $DB->qry($query);
 		
-// 		echo "Question updated: $result";
+		if ($result == 1)
+			echo "Answers / questions updated";
+		else 
+			echo "Answers / questions was not updated. Result code is: " + $result;
 	}
 } 
 	
-$query="SELECT Q.ID, Q.ID_CATEGORY, C.NAME C_NAME, Q.ID_SUB_CATEGORY, S.NAME S_NAME, Q.GROUP_BREAK, Q.QUESTION ".
-		"FROM QUESTIONS Q, CATEGORIES C, SUB_CATEGORIES S ".
+$query="SELECT Q.ID, Q.ID_CATEGORY, C.NAME C_NAME, Q.ID_SUB_CATEGORY, S.NAME S_NAME, Q.ANSWER_GROUP, Q.QUESTION ".
+		"FROM questions_answers Q, categories C, sub_categories S ".
 		"WHERE ".
 		"Q.ID_CATEGORY = C.ID ".
 		"AND Q.ID_SUB_CATEGORY = S.ID ".
@@ -56,7 +59,7 @@ $questions = $DB->qry($query);
 
 $num_questions = $DB->qry_row_num($questions);
 
-$query="SELECT ID C_ID, NAME C_NAME, ACTIVE FROM CATEGORIES C WHERE C.ACTIVE='A' ORDER BY 2";
+$query="SELECT ID C_ID, NAME C_NAME, ACTIVE FROM categories C WHERE C.ACTIVE='A' ORDER BY 2";
 $categories = $DB->qry($query);
 $num_categories = $DB->qry_row_num($categories);
 
@@ -70,7 +73,7 @@ while ($j < $num_categories) {
 	++$j;
 }
 
-$query="SELECT S.ID S_ID, S.NAME S_NAME, S.ACTIVE C_ACTIVE FROM SUB_CATEGORIES S WHERE S.ACTIVE='A' ORDER BY 1";
+$query="SELECT S.ID S_ID, S.NAME S_NAME, S.ACTIVE C_ACTIVE FROM sub_categories S WHERE S.ACTIVE='A' ORDER BY 1";
 $sub_categories = $DB->qry($query);
 $num_sub_categories = $DB->qry_row_num($sub_categories);
 
@@ -102,15 +105,19 @@ function setQuestion_id(question_id){
 </script>
 
 <form action="questions.php" name="question" id="question" method="post">
+<p>
+* This is used to group two questions form the same strategic/leadership
+<p>
+
 <input type="hidden" name="action" id="action" value="" />
 <input type="hidden" name="question_id" id="question_id" value="" />
 <hr>
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
-<th><font face="Arial, Helvetica, sans-serif">Category</font></th>
-<th><font face="Arial, Helvetica, sans-serif">Sub category</font></th>
-<th><font face="Arial, Helvetica, sans-serif">Group break *</font></th>
-<th><font face="Arial, Helvetica, sans-serif">Name</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Question *</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Strategic skillset</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Leadership</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Answers</font></th>
 <th><font face="Arial, Helvetica, sans-serif"></font></th>
 </tr>
 <?
@@ -121,10 +128,14 @@ while ($i < $num_questions) {
 	$category_name = mysql_result($questions,$i,"c_name");
 	$sub_category_id = mysql_result($questions,$i,"id_sub_category");
 	$sub_category_name = mysql_result($questions,$i,"s_name");
-	$group_break = mysql_result($questions,$i,"group_break");
+	$answer_group = mysql_result($questions,$i,"answer_group");
 	$question_name = mysql_result($questions,$i,"question");
 	?>
 	<tr> 
+		<td><font face="Arial, Helvetica, sans-serif">
+			<input type="text" size="5" name="change_answer_group<? echo "$question_id"; ?>" value="<? echo "$answer_group"; ?>"/>
+			</font>
+		</td>
 		<td><font face="Arial, Helvetica, sans-serif">			
 			<select name="change_category_id<? echo "$question_id"; ?>">
 				<option selected='selected' value="<? echo "$category_id"; ?>"><? echo "$category_name"; ?></option>
@@ -148,22 +159,6 @@ while ($i < $num_questions) {
 				?>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
-		 	<select name="change_group_break<? echo "$question_id"; ?>">
-		 		<?  
-		 		$active_selected = "";
-		 		$inactive_selected = "";
-		 		if ($group_break == 1)
-		 			$group_break_one_selected = "selected='selected'";
-		 		else if ($group_break == 2)
-		 			$group_break_two_selected = "selected='selected'";
-		 		
-		 		?>
-		 		<option <? echo "$group_break_one_selected"; ?> value="1">Group one</option>
-		 		<option <? echo "$group_break_two_selected"; ?> value="2">Group two</option>
-			</select>
-			</font>
-		</td>
-		<td><font face="Arial, Helvetica, sans-serif">
 			<textarea rows="5" cols="60" name="change_question_name<? echo "$question_id"; ?>"><? echo "$question_name"; ?></textarea>
 		</font>
 		</td>
@@ -180,7 +175,10 @@ while ($i < $num_questions) {
 <hr>
 <table border="1" cellspacing="2" cellpadding="2">
 	<tr> 
-		<th><font face="Arial, Helvetica, sans-serif">Question:</font></th>
+		<th><font face="Arial, Helvetica, sans-serif">
+			<input type="text" size="5" name="add_answer_group" />
+			</font>
+		</th>
 		<th><font face="Arial, Helvetica, sans-serif"><select name="add_category_id">
 													<option>(select one)</option>
 													<?
@@ -204,20 +202,9 @@ while ($i < $num_questions) {
 													</select>
 		</font></th>
 		<th><font face="Arial, Helvetica, sans-serif">
-		 	<select name="add_group_break">
-				<option>(select one)</option>
-			 	<option value="1">Group one</option>
-		 		<option value="2">Group two</option>
-			</select>
-			</font>
-		</th>
-		<th><font face="Arial, Helvetica, sans-serif">
-			<textarea rows="5" cols="60" name="add_question_name">New question</textarea>
+			<textarea rows="5" cols="60" name="add_question_name">New question/answer</textarea>
 		</font></th>
 		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('action'), 'A')" /></font></th>
 	</tr>
 </table>
-<p>
-* This is used to group together two questions form the same category/sub category
-<p>
 </form>

@@ -2,7 +2,7 @@
 include("../DB.php");
 $DB = DB::Open();
 
-$query="SELECT ID, NAME, EMAIL FROM TESTERS ORDER BY 1 DESC";
+$query="SELECT ID, NAME, EMAIL FROM testers ORDER BY 1 DESC";
 $testers = $DB->qry($query);
 
 $num_testers = $DB->qry_row_num($testers);

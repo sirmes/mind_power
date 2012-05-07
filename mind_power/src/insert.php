@@ -8,10 +8,10 @@ $email = $_POST["email"];
 $id_company = $_POST["company_id"];
 $answer_ids = array();
 
-$query = "SELECT DISTINCT GROUP_BREAK FROM QUESTIONS ORDER BY 1";
+$query = "SELECT DISTINCT ANSWER_GROUP FROM QUESTIONS_ANSWERS ORDER BY 1";
 $result = $DB->qry($query);
 while ($row = mysql_fetch_assoc($result)) {
-	$value = $row['GROUP_BREAK'];
+	$value = $row['ANSWER_GROUP'];
 	$answer_id = $_POST['answer'.$value.''];
 	
 	array_push($answer_ids, $answer_id);
@@ -42,7 +42,7 @@ if ($result) {
 	$answers_created;
 	foreach ($answer_ids as $current_answer_id) {
 		echo "current question id: $current_answer_id <br>";
-		$query = "INSERT INTO ANSWERS VALUES ('', $current_answer_id, $max_tester_id)";
+		$query = "INSERT INTO TESTERS_ANSWERS VALUES ('', $current_answer_id, $max_tester_id)";
 		$answers_created = $DB->qry($query);
 	}
 	

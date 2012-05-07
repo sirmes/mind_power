@@ -14,7 +14,7 @@ if (strcmp($action,"A") == 0) {
 
 	//echo "Parameters: $add_company_name, $add_company_status";
 	
-	$query="INSERT INTO COMPANIES VALUES ('', '$add_company_name', '$add_company_status')";
+	$query="INSERT INTO companies VALUES ('', '$add_company_name', '$add_company_status')";
 	$result = $DB->qry($query);
 	
 	//echo "Company added: $result";
@@ -28,7 +28,7 @@ else {
 		$change_company_name = $_POST['change_company_name'.$company_id.''];
 		$change_company_status = $_POST['change_company_status'.$company_id.''];
 		
-		$query="UPDATE COMPANIES SET NAME='$change_company_name', ACTIVE='$change_company_status' WHERE ID = $company_id";
+		$query="UPDATE companies SET NAME='$change_company_name', ACTIVE='$change_company_status' WHERE ID = $company_id";
 		
 		//echo "SQL => $query <br>";
 		
@@ -38,7 +38,7 @@ else {
 	}
 } 
 	
-$query="SELECT ID, NAME, ACTIVE FROM COMPANIES";
+$query="SELECT * FROM companies";
 $companies = $DB->qry($query);
 
 $num_companies = $DB->qry_row_num($companies);

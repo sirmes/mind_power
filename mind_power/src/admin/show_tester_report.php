@@ -7,7 +7,7 @@ $tester_id = $_POST['tester_id'];
 echo "Tester id: $tester_id <br>";
 
 $query="select c.name as category, s.name as sub_category, count(s.name) as qtd " .
-		"from categories c, sub_categories s, testers t, answers a, questions q " .
+		"from categories c, sub_categories s, testers t, testers_answers a, questions_answers q " .
 		"where " .
 		"c.id = q.id_category " .
 		"and q.id_sub_category = s.id " .

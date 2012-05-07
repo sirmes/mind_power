@@ -14,7 +14,7 @@ if (strcmp($action,"A") == 0) {
 
 // 	echo "Parameters: $add_category_name, $add_category_status";
 	
-	$query="INSERT INTO CATEGORIES VALUES ('', '$add_category_name', '$add_category_status')";
+	$query="INSERT INTO categories VALUES ('', '$add_category_name', '$add_category_status')";
 	$result = $DB->qry($query);
 	
 // 	echo "Category added: $result";
@@ -28,17 +28,20 @@ else {
 		$change_category_name = $_POST['change_category_name'.$category_id.''];
 		$change_category_status = $_POST['change_category_status'.$category_id.''];
 		
-		$query="UPDATE CATEGORIES SET NAME='$change_category_name', ACTIVE='$change_category_status' WHERE ID = $category_id";
+		$query="UPDATE categories SET NAME='$change_category_name', ACTIVE='$change_category_status' WHERE ID = $category_id";
 		
 // 		echo "SQL => $query <br>";
 		
 		$result = $DB->qry($query);
 		
-// 		echo "category updated: $result";
+		if ($result == 1)
+			echo "Strategic skillset updated";
+		else 
+			echo "Strategic skillset was not updated. Result code is: " + $result;
 	}
 } 
 	
-$query="SELECT ID, NAME, ACTIVE FROM CATEGORIES";
+$query="SELECT ID, NAME, ACTIVE FROM categories";
 $categories = $DB->qry($query);
 
 $num_categories = $DB->qry_row_num($categories);
@@ -65,7 +68,7 @@ function setCategory_id(category_id){
 <hr>
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
-<th><font face="Arial, Helvetica, sans-serif">Name</font></th>
+<th><font face="Arial, Helvetica, sans-serif">Strategic skillset</font></th>
 <th><font face="Arial, Helvetica, sans-serif">Status *</font></th>
 <th><font face="Arial, Helvetica, sans-serif"></font></th>
 </tr>

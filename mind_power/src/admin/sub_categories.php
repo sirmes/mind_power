@@ -16,7 +16,7 @@ if (strcmp($action,"A") == 0) {
 
 // 	echo "Parameters: $add_sub_category_name, $add_sub_category_status";
 	
-	$query="INSERT INTO SUB_CATEGORIES VALUES ('', $add_category_id ,'$add_sub_category_name', '$add_sub_category_status')";
+	$query="INSERT INTO sub_categories VALUES ('', $add_category_id ,'$add_sub_category_name', '$add_sub_category_status')";
 	$result = $DB->qry($query);
 	
 // 	echo "Sub category added: $result";
@@ -31,24 +31,27 @@ else {
 		$change_sub_category_name = $_POST['change_sub_category_name'.$sub_category_id.''];
 		$change_sub_category_status = $_POST['change_sub_category_status'.$sub_category_id.''];
 		
-		$query="UPDATE SUB_CATEGORIES SET ID_CATEGORY='$change_category_id', NAME='$change_sub_category_name', ACTIVE='$change_sub_category_status' WHERE ID = $sub_category_id";
+		$query="UPDATE sub_categories SET ID_CATEGORY='$change_category_id', NAME='$change_sub_category_name', ACTIVE='$change_sub_category_status' WHERE ID = $sub_category_id";
 		
 // 		echo "SQL => $query <br>";
 		
 		$result = $DB->qry($query);
 		
-// 		echo "Sub category updated: $result";
+		if ($result == 1)
+			echo "Leadership updated";
+		else 
+			echo "Leadership was not updated. Result code is: " + $result;
 	}
 } 
 	
-$query="SELECT C.ID C_ID, C.NAME C_NAME, C.ACTIVE C_ACTIVE, S.ID S_ID, S.NAME S_NAME, S.ACTIVE S_ACTIVE FROM CATEGORIES C, SUB_CATEGORIES S ".
+$query="SELECT C.ID C_ID, C.NAME C_NAME, C.ACTIVE C_ACTIVE, S.ID S_ID, S.NAME S_NAME, S.ACTIVE S_ACTIVE FROM categories C, sub_categories S ".
 		"WHERE C.ID=S.ID_CATEGORY AND C.ACTIVE='A'";
 $sub_categories = $DB->qry($query);
 
 $num_sub_categories = $DB->qry_row_num($sub_categories);
 
 
-$query="SELECT C.ID C_ID, C.NAME C_NAME, C.ACTIVE C_ACTIVE FROM CATEGORIES C WHERE C.ACTIVE='A'";
+$query="SELECT C.ID C_ID, C.NAME C_NAME, C.ACTIVE C_ACTIVE FROM categories C WHERE C.ACTIVE='A'";
 $categories = $DB->qry($query);
 $num_categories = $DB->qry_row_num($categories);
 
@@ -62,7 +65,7 @@ while ($j < $num_categories) {
 	++$j;
 }
 
-echo "<b><center>Sub categories</center></b><br><br>";
+echo "<b><center>Leadership</center></b><br><br>";
 
 ?>
 

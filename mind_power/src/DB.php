@@ -7,13 +7,18 @@
 
         protected function __construct($database, $hostname, $hostport, $username, $password)
         {
-        	//TODO: We could have this in a property file
-        	$database="mind_power";
-        	$hostname="127.0.0.1";
-        	$hostport="3306";
-        	$username="mind_power";
-        	$password="mind_power";
-        	
+        	//This is for localhost
+	       	$database="mind_power";
+	       	$hostname="127.0.0.1";
+	       	$hostport="3306";
+        	$username="a2291259_mindp";
+        	$password="mind123";
+	       	
+	       	//This is for 000webhost
+//         	$database="a2291259_mindp";
+//         	$hostname="mysql3.000webhost.com";
+//         	$hostport="3306";
+
             self::$DB_Name = $database;
             self::$DB_Conn = mysql_connect($hostname . ":" . $hostport, $username, $password);
             if (!self::$DB_Conn) { die('Critical Stop Error: Database Error<br />' . mysql_error()); }

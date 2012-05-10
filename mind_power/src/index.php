@@ -12,6 +12,11 @@ $num_companies = $DB->qry_row_num($companies);
 
 echo "<b><center>Database Output</center></b><br><br>";
 
+$test_on = htmlspecialchars($_GET["test_on"]);
+if ($test_on == "true") {
+	echo "test is on: ".$test_on."<br><br>";
+}
+
 ?>
 
 <form action="insert.php" method="post">
@@ -35,6 +40,10 @@ while ($i < $num_companies) {
 </select>
 
 <hr>
+<p>
+<input type="Submit" value="Send your anwsers">
+<p>
+
 <table border="1" cellspacing="2" cellpadding="2">
 <tr> 
 <th><font face="Arial, Helvetica, sans-serif">Question</font></th>
@@ -46,8 +55,8 @@ $i=0;
 $temp_answer_group;
 while ($i < $num) {
 	$id=mysql_result($questions,$i,"id");
-	$id_category=mysql_result($questions,$i,"id_category");
-	$id_sub_category=mysql_result($questions,$i,"id_sub_category");
+	$id_strategic_management=mysql_result($questions,$i,"id_strategic_management");
+	$id_leadership=mysql_result($questions,$i,"id_leadership");
 	$answer_group=mysql_result($questions,$i,"answer_group");
 	$question=mysql_result($questions,$i,"question");
 	
@@ -60,14 +69,20 @@ while ($i < $num) {
 	?>
 	</font></td>
 <!--
-<td><font face="Arial, Helvetica, sans-serif"><? echo "$id_category"; ?></font></td>
-<td><font face="Arial, Helvetica, sans-serif"><? echo "$id_sub_category"; ?></font></td>
+<td><font face="Arial, Helvetica, sans-serif"><? echo "$id_strategic_management"; ?></font></td>
+<td><font face="Arial, Helvetica, sans-serif"><? echo "$id_leadership"; ?></font></td>
 -->
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$question"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif">
-	<input type="hidden" name="category<? echo "$answer_group"; ?>" value="<? echo "$id_category"; ?>" />
-	<input type="hidden" name="sub_category<? echo "$answer_group"; ?>" value="<? echo "$id_sub_category"; ?>" />
-	<input type="radio" name="answer<? echo "$answer_group"; ?>" value="<? echo "$id"; ?>">
+	<input type="hidden" name="strategic_management<? echo "$answer_group"; ?>" value="<? echo "$id_strategic_management"; ?>" />
+	<input type="hidden" name="leadership<? echo "$answer_group"; ?>" value="<? echo "$id_leadership"; ?>" />
+	<input type="radio" name="answer<? echo "$answer_group"; ?>" value="<? echo "$id"; ?>" 
+	<?php
+		if ($test_on == "true" && ($i % 2 ==0)) {
+			echo "checked='checked'";
+		} 
+	?>
+	 >
 </font></td>
 </tr>
 <?

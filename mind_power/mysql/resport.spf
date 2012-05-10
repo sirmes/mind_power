@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>mind_power</string>
+			<key>host</key>
+			<string>127.0.0.1</string>
+			<key>kcid</key>
+			<string>-6571177963077866617</string>
+			<key>name</key>
+			<string>Locahost_mind_power</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPTCPIPConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>mind_power</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>latin1</string>
+			<key>contentFilter</key>
+			<dict/>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {1547, 844}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>--1) Not grouped
+select * from testers_answers_counts where id_tester = 46;
+
+--2) Grouped by leadership
+select * from testers_answers_counts where id_tester = 46 
+group by id_sub_category order by sub_category_percentage;
+
+--4) Use from one of above
+
+--5)
+--All that were submitted
+select t.*, q.* 
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id;
+
+--All that were not submitted
+select t.*, q.* 
+from testers_answers t, questions_answers q
+where 
+t.id_question = q.id
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id);
+
+--Answers picked up twice
+select s.name, question, count(*) 
+from questions_answers q, testers_answers t, sub_categories s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 3 desc, 1, 2;
+
+
+
+
+</string>
+			<key>table</key>
+			<string>questions_answers</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>select s.name, question, count(*) 
+from questions_answers q, testers_answers t, sub_categories s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 3 desc, 1, 2</string>
+		<string>select s.name, question, count(*) 
+from questions_answers q, testers_answers t, sub_categories s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 1, 2, 3 desc</string>
+		<string>select s.name, question, count(*) 
+from questions_answers q, testers_answers t, sub_categories s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 2, 1</string>
+		<string>select question, count(*) 
+from questions_answers q, testers_answers t, sub_categories s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 2, 1</string>
+		<string>select question, count(*) 
+from questions_answers q, testers_answers t, sub_category s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 2, 1</string>
+		<string>select question, count(*) from questions_answers
+group by question
+order by 2, 1</string>
+		<string>select t.*, q.* 
+from testers_answers t, questions_answers q
+where 
+t.id_question = q.id</string>
+		<string>select t.*, q.* 
+from testers_answers t, questions_answers q</string>
+		<string>select count(*) from questions_answers</string>
+		<string>select count(*) from testers_answers where id_tester = 47</string>
+		<string>select count(*) from testers_answers where id = 47</string>
+		<string>select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id</string>
+		<string>select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id)</string>
+		<string>select t.*, q.* 
+from testers_answers t, questions_answers q
+where 
+t.id_question = q.id
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id)</string>
+		<string>select question, count(*) from questions_answers
+group by question
+order by 2</string>
+		<string>select question, count(*) from questions_answers
+group by question</string>
+		<string>select question, count(*) from questions_answers</string>
+		<string>select * from questions_answers</string>
+		<string>select t.*, q.* 
+from testers_answers t, questions_answers q
+where 
+ t.id_question = q.id
+and q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id)</string>
+		<string>select t.*, q.* 
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.5.22</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

@@ -1,0 +1,36 @@
+--1) Not grouped
+select * from testers_answers_counts where id_tester = 46;
+
+--2) Grouped by leadership
+select * from testers_answers_counts where id_tester = 46 
+group by id_sub_category order by sub_category_percentage;
+
+--4) Use from one of above
+
+--5)
+--All that were submitted
+select t.*, q.* 
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id;
+
+--All that were not submitted
+select t.*, q.* 
+from testers_answers t, questions_answers q
+where 
+t.id_question = q.id
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 47
+and t.id_question = q.id);
+
+--Answers picked up twice
+select s.name, question, count(*) 
+from questions_answers q, testers_answers t, sub_categories s
+where t.id_tester = 47
+and t.id_question = q.id
+and s.id = q.id_sub_category
+group by question
+order by 3 desc, 1, 2;

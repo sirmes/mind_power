@@ -45,7 +45,7 @@ while ($i < $num_companies) {
 <p>
 
 <table border="1" cellspacing="2" cellpadding="2">
-<tr> 
+<tr bgcolor="orange"> 
 <th><font face="Arial, Helvetica, sans-serif">Question</font></th>
 <th colspan="2" ><font face="Arial, Helvetica, sans-serif">Answer</font></th>
 </tr>
@@ -60,9 +60,12 @@ while ($i < $num) {
 	$answer_group=mysql_result($questions,$i,"answer_group");
 	$question=mysql_result($questions,$i,"question");
 	
-	
+	if ($i%2 ==0)
+		$row_color = "";
+	else
+		$row_color = "gray";
 ?>
-<tr> 
+<tr bgcolor="<?php echo "$row_color"; ?>"> 
 <td><font face="Arial, Helvetica, sans-serif">
 	<? if ($temp_answer_group != $answer_group)
 			echo "$answer_group"; 

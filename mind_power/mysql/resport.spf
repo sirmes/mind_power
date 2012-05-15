@@ -43,60 +43,83 @@
 		<dict>
 			<key>connectionEncoding</key>
 			<string>latin1</string>
-			<key>contentFilter</key>
-			<dict/>
 			<key>contentPageNumber</key>
 			<integer>1</integer>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{0, 0}, {1547, 844}}</string>
+			<string>{{0, 0}, {694, 456}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>queries</key>
-			<string>--1) Not grouped
-select * from testers_answers_counts where id_tester = 46;
+			<string>--1) Bring tester answers counts not grouped
+select l.name as leadership, t.leadership_count, t.leadership_percentage
+from testers_answers_counts t, leadership l 
+where id_tester = 49
+and t.id_leadership = l.id
+order by 3;
 
---2) Grouped by leadership
-select * from testers_answers_counts where id_tester = 46 
-group by id_sub_category order by sub_category_percentage;
+--2) Bring tester answers counts grouped by leadership
+select s.name strategic_management, l.name as leadership, t.leadership_count, t.leadership_percentage
+from testers_answers_counts t, leadership l, strategic_management s
+where id_tester = 49
+and t.id_leadership = l.id
+and s.id = t.id_strategic_management
+group by s.name, l.name, t.leadership_count, t.leadership_percentage
+order by s.id, l.name, t.leadership_percentage;
 
 --4) Use from one of above
 
---5)
---All that were submitted
-select t.*, q.* 
-from testers_answers t, questions_answers q
-where t.id_tester = 47
-and t.id_question = q.id;
+--5)Being all questions(statements) that were submitted
+select l.name leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and l.id = q.id_leadership
+group by l.name, q.question
+order by 1, 2;
 
---All that were not submitted
-select t.*, q.* 
-from testers_answers t, questions_answers q
-where 
-t.id_question = q.id
-and 
-q.id not in (
+--Bring all questions(statements) that were NOT submitted
+select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+and q.id not in (
 select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 47
-and t.id_question = q.id);
+where t.id_tester = 49
+and t.id_question = q.id)
+group by name, question
+order by name, question
+limit 0, 3;
 
---Answers picked up twice
-select s.name, question, count(*) 
-from questions_answers q, testers_answers t, sub_categories s
-where t.id_tester = 47
+--Answers picked twice
+select * from 
+(
+select s.name, question, count(question) as counter
+from questions_answers q, testers_answers t, leadership s
+where t.id_tester = 48
 and t.id_question = q.id
-and s.id = q.id_sub_category
-group by question
-order by 3 desc, 1, 2;
+and s.id = q.id_leadership
+group by s.name
+order by 3 desc, 1, 2
+) as results
+where counter &gt;= 2
 
+/* General tests */
 
+select * from questions_answers where question like '%concerns and think in their shoes';
 
+select * from questions_answers where question like '%pain and think in their shoes';
+
+update questions_answers set question = 'I can feel others'' pain and think in their shoes'
+where id in (19, 349, 380, 382);
 
 </string>
 			<key>table</key>
-			<string>questions_answers</string>
+			<string>companies</string>
 			<key>view</key>
 			<string>SP_VIEW_CUSTOMQUERY</string>
 			<key>windowVerticalDividerPosition</key>
@@ -111,91 +134,154 @@ order by 3 desc, 1, 2;
 	<array/>
 	<key>queryHistory</key>
 	<array>
-		<string>select s.name, question, count(*) 
-from questions_answers q, testers_answers t, sub_categories s
-where t.id_tester = 47
-and t.id_question = q.id
-and s.id = q.id_sub_category
-group by question
-order by 3 desc, 1, 2</string>
-		<string>select s.name, question, count(*) 
-from questions_answers q, testers_answers t, sub_categories s
-where t.id_tester = 47
-and t.id_question = q.id
-and s.id = q.id_sub_category
-group by question
-order by 1, 2, 3 desc</string>
-		<string>select s.name, question, count(*) 
-from questions_answers q, testers_answers t, sub_categories s
-where t.id_tester = 47
-and t.id_question = q.id
-and s.id = q.id_sub_category
-group by question
-order by 2, 1</string>
-		<string>select question, count(*) 
-from questions_answers q, testers_answers t, sub_categories s
-where t.id_tester = 47
-and t.id_question = q.id
-and s.id = q.id_sub_category
-group by question
-order by 2, 1</string>
-		<string>select question, count(*) 
-from questions_answers q, testers_answers t, sub_category s
-where t.id_tester = 47
-and t.id_question = q.id
-and s.id = q.id_sub_category
-group by question
-order by 2, 1</string>
-		<string>select question, count(*) from questions_answers
-group by question
-order by 2, 1</string>
-		<string>select t.*, q.* 
-from testers_answers t, questions_answers q
-where 
-t.id_question = q.id</string>
-		<string>select t.*, q.* 
-from testers_answers t, questions_answers q</string>
-		<string>select count(*) from questions_answers</string>
-		<string>select count(*) from testers_answers where id_tester = 47</string>
-		<string>select count(*) from testers_answers where id = 47</string>
 		<string>select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 47
+where t.id_tester = 49
 and t.id_question = q.id</string>
 		<string>select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 47
+where t.id_tester = 49
 and t.id_question = q.id)</string>
-		<string>select t.*, q.* 
-from testers_answers t, questions_answers q
-where 
-t.id_question = q.id
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
 and 
 q.id not in (
 select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 47
+where t.id_tester = 49
 and t.id_question = q.id)</string>
-		<string>select question, count(*) from questions_answers
-group by question
-order by 2</string>
-		<string>select question, count(*) from questions_answers
-group by question</string>
-		<string>select question, count(*) from questions_answers</string>
-		<string>select * from questions_answers</string>
-		<string>select t.*, q.* 
-from testers_answers t, questions_answers q
-where 
- t.id_question = q.id
-and q.id not in (
+		<string>select * from 
+(
+select s.name, question, count(question) as counter
+from questions_answers q, testers_answers t, leadership s
+where t.id_tester = 48
+and t.id_question = q.id
+and s.id = q.id_leadership
+group by s.name
+order by 3 desc, 1, 2
+) as results
+where counter &gt;= 2</string>
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+/*and l.id = 6*/
+and 
+q.id not in (
 select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 47
+where t.id_tester = 49
 and t.id_question = q.id)</string>
-		<string>select t.*, q.* 
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+/*and l.id = 6*/
+and 
+q.id not in (
+select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 47
-and t.id_question = q.id</string>
+where t.id_tester = 49</string>
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id</string>
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+/*and l.id = 6*/
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 49
+and t.id_question = q.id)
+group by name, question
+order by name, question</string>
+		<string>select l.name leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and l.id = q.id_leadership
+group by l.name, q.question
+order by 1, 2</string>
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+/*and l.id = 6*/
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 49
+and t.id_question = q.id)
+group by name, question
+order by name, question
+limit 0, 3</string>
+		<string>select * from questions_answers where question like '%pain and think in their shoes'</string>
+		<string>update questions_answers set question = 'I can feel others'' pain and think in their shoes'
+where id in (19, 349, 380, 382)</string>
+		<string>select * from questions_answers where question like '%concerns and think in their shoes'</string>
+		<string>update questions_answers set question = 'I can feel others’ pain and think in their shoes'
+where id in (19, 349, 380, 382)</string>
+		<string>update from questions_answers set question = 'I can feel others’ pain and think in their shoes'
+where id in (19, 349, 380, 382)</string>
+		<string>select * from questions</string>
+		<string>select * from questions where question like '%concerns and think in their shoes'</string>
+		<string>select l.name as leadership, q.question
+from testers_answers t, questions_answers q, leadership l
+where t.id_tester = 49
+and t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'</string>
+		<string>select l.name, q.question
+from testers_answers t, questions_answers q, leadership l
+where 
+t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+/*and l.id = 6*/
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 49
+and t.id_question = q.id)
+group by name, question
+order by name, question
+limit 0, 3</string>
+		<string>--All questions(statements) that were not submitted
+select l.name, q.question
+from testers_answers t, questions_answers q, leadership l
+where 
+t.id_question = q.id
+and q.id_leadership = l.id
+and l.active = 'A'
+/*and l.id = 6*/
+and 
+q.id not in (
+select q.id
+from testers_answers t, questions_answers q
+where t.id_tester = 49
+and t.id_question = q.id)
+group by name, question
+order by name, question
+limit 0, 3</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

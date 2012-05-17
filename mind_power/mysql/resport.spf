@@ -43,70 +43,105 @@
 		<dict>
 			<key>connectionEncoding</key>
 			<string>latin1</string>
+			<key>contentFilter</key>
+			<dict/>
 			<key>contentPageNumber</key>
 			<integer>1</integer>
+			<key>contentSelectedIndexSet</key>
+			<array>
+				<integer>0</integer>
+			</array>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{0, 0}, {694, 456}}</string>
+			<string>{{0, 0}, {1055, 545}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>queries</key>
 			<string>--1) Bring tester answers counts not grouped
 select l.name as leadership, t.leadership_count, t.leadership_percentage
 from testers_answers_counts t, leadership l 
-where id_tester = 49
+where id_tester = 56
 and t.id_leadership = l.id
 order by 3;
 
 --2) Bring tester answers counts grouped by leadership
 select s.name strategic_management, l.name as leadership, t.leadership_count, t.leadership_percentage
 from testers_answers_counts t, leadership l, strategic_management s
-where id_tester = 49
+where id_tester = 56
 and t.id_leadership = l.id
 and s.id = t.id_strategic_management
-group by s.name, l.name, t.leadership_count, t.leadership_percentage
-order by s.id, l.name, t.leadership_percentage;
+order by s.id, t.leadership_percentage;
 
 --4) Use from one of above
 
 --5)Being all questions(statements) that were submitted
 select l.name leadership, q.question
 from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
+where t.id_tester = 56
 and t.id_question = q.id
 and l.id = q.id_leadership
 group by l.name, q.question
 order by 1, 2;
 
 --Bring all questions(statements) that were NOT submitted
-select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
+select l.name as leadership, q.question, q.id
+from questions_answers q, leadership l,
+(
+select l.id
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage asc
+limit 0,4) as bottom_leadership
+where q.id_leadership = l.id
 and q.id not in (
 select q.id
 from testers_answers t, questions_answers q
-where t.id_tester = 49
+where t.id_tester = 56
 and t.id_question = q.id)
+and l.id in (bottom_leadership.id)
 group by name, question
-order by name, question
-limit 0, 3;
+order by name, question;
 
---Answers picked twice
-select * from 
+/*To check the select above ==&gt; select * from testers_answers where id in (342, 382, 38, 4, 31, 346, 404320,337) and id_tester = 56; */;
+
+--Answers picked twice;
+select leadership_id, leadership, question, leadership_percentage
+from 
 (
-select s.name, question, count(question) as counter
-from questions_answers q, testers_answers t, leadership s
-where t.id_tester = 48
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
 and t.id_question = q.id
-and s.id = q.id_leadership
-group by s.name
+group by question
 order by 3 desc, 1, 2
-) as results
+) as results,
+(select l.id, l.name as leadership, t.leadership_percentage
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
 where counter &gt;= 2
+and leadership_id in (top3.id)
+order by 4 desc;
+
+--Top 3
+select l.name as leadership, t.leadership_percentage 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4;
+
+--Bottom 3
+select l.name as leadership, t.leadership_percentage 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage asc
+limit 0,4;
 
 /* General tests */
 
@@ -117,9 +152,26 @@ select * from questions_answers where question like '%pain and think in their sh
 update questions_answers set question = 'I can feel others'' pain and think in their shoes'
 where id in (19, 349, 380, 382);
 
-</string>
+--Strategic management, leadership and statements
+select s.name as strategic_management, l.name as leadership, q.`answer_group` ,q.question as statement
+from strategic_management s, leadership l, questions_answers q
+where
+s.id = l.id_strategic_management
+and l.`id_strategic_management` = q.`id_strategic_management`
+and l.`id` = q.`id_leadership`
+order by 3;
+
+select distinct s.name as strategic_management
+from strategic_management s, leadership l, questions_answers q
+where
+s.id = l.id_strategic_management
+and l.`id_strategic_management` = q.`id_strategic_management`
+and l.`id` = q.`id_leadership`;
+
+select t.id as tester_id, title, t.name, email, c.name company, date_format(created_date, '%M %D, %Y') 
+from testers t, companies c where c.id = t.id_company and t.id = 56;</string>
 			<key>table</key>
-			<string>companies</string>
+			<string>testers</string>
 			<key>view</key>
 			<string>SP_VIEW_CUSTOMQUERY</string>
 			<key>windowVerticalDividerPosition</key>
@@ -134,154 +186,202 @@ where id in (19, 349, 380, 382);
 	<array/>
 	<key>queryHistory</key>
 	<array>
-		<string>select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id</string>
-		<string>select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
+		<string>select s.name as strategic_management, l.name as leadership, q.`answer_group` ,q.question as statement
+from strategic_management s, leadership l, questions_answers q
+where
+s.id = l.id_strategic_management
+and l.`id_strategic_management` = q.`id_strategic_management`
+and l.`id` = q.`id_leadership`
+order by 3</string>
+		<string>select t.id as tester_id, title, t.name, email, c.name company, date_format(created_date, '%M %D, %Y') 
+from testers t, companies c where c.id = t.id_company and t.id = 56</string>
+		<string>select t.id as tester_id, title, t.name, email, c.name company, date_format(created_date, '%M %e, %Y') 
+from testers t, companies c where c.id = t.id_company and t.id = 56</string>
+		<string>select t.id as tester_id, title, t.name, email, c.name company, created_date from testers t, companies c where c.id = t.id_company and t.id = 56</string>
+		<string>select t.id as tester_id, title, t.name, email, c.name company from testers t, companies c where c.id = t.id_company and t.id = 56</string>
+		<string>select leadership_id, leadership, question, leadership_percentage
+from 
+(
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
 and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)</string>
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id, l.name as leadership, t.leadership_percentage
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)
+order by 4 desc</string>
+		<string>select l.id, l.name as leadership, t.leadership_percentage
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4</string>
+		<string>select leadership_id, leadership, question, leadership_percentage
+from 
+(
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id, l.name as leadership, t.leadership_percentage
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
+		<string>select l.id, l.name as leadership
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4</string>
+		<string>select leadership_id, leadership, question from 
+(
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id, l.name as leadership
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
+		<string>select leadership, question from 
+(
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id, l.name as leadership
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
 		<string>select * from 
 (
-select s.name, question, count(question) as counter
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id, l.name 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
+		<string>select l.id, l.name 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4</string>
+		<string>select * from 
+(
+select q.id_leadership as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
+		<string>select q.id as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2</string>
+		<string>select l.id 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4</string>
+		<string>elect l.id, l.name as leadership
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4</string>
+		<string>select * from 
+(
+select q.id as leadership_id, question, count(question) as counter
+from questions_answers q, testers_answers t
+where t.id_tester = 56
+and t.id_question = q.id
+group by question
+order by 3 desc, 1, 2
+) as results,
+(select l.id 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
+		<string>select s.id as leadership_id, s.name, question, count(question) as counter
 from questions_answers q, testers_answers t, leadership s
-where t.id_tester = 48
+where t.id_tester = 56
+and t.id_question = q.id
+and s.id = q.id_leadership
+group by s.name
+order by 3 desc, 1, 2</string>
+		<string>select * from 
+(
+select s.id as leadership_id, s.name, question, count(question) as counter
+from questions_answers q, testers_answers t, leadership s
+where t.id_tester = 56
 and t.id_question = q.id
 and s.id = q.id_leadership
 group by s.name
 order by 3 desc, 1, 2
-) as results
-where counter &gt;= 2</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-/*and l.id = 6*/
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-/*and l.id = 6*/
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-/*and l.id = 6*/
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)
-group by name, question
-order by name, question</string>
-		<string>select l.name leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and l.id = q.id_leadership
-group by l.name, q.question
-order by 1, 2</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-/*and l.id = 6*/
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)
-group by name, question
-order by name, question
-limit 0, 3</string>
-		<string>select * from questions_answers where question like '%pain and think in their shoes'</string>
-		<string>update questions_answers set question = 'I can feel others'' pain and think in their shoes'
-where id in (19, 349, 380, 382)</string>
-		<string>select * from questions_answers where question like '%concerns and think in their shoes'</string>
-		<string>update questions_answers set question = 'I can feel others’ pain and think in their shoes'
-where id in (19, 349, 380, 382)</string>
-		<string>update from questions_answers set question = 'I can feel others’ pain and think in their shoes'
-where id in (19, 349, 380, 382)</string>
-		<string>select * from questions</string>
-		<string>select * from questions where question like '%concerns and think in their shoes'</string>
-		<string>select l.name as leadership, q.question
-from testers_answers t, questions_answers q, leadership l
-where t.id_tester = 49
-and t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'</string>
-		<string>select l.name, q.question
-from testers_answers t, questions_answers q, leadership l
-where 
-t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-/*and l.id = 6*/
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)
-group by name, question
-order by name, question
-limit 0, 3</string>
-		<string>--All questions(statements) that were not submitted
-select l.name, q.question
-from testers_answers t, questions_answers q, leadership l
-where 
-t.id_question = q.id
-and q.id_leadership = l.id
-and l.active = 'A'
-/*and l.id = 6*/
-and 
-q.id not in (
-select q.id
-from testers_answers t, questions_answers q
-where t.id_tester = 49
-and t.id_question = q.id)
-group by name, question
-order by name, question
-limit 0, 3</string>
+) as results,
+(select l.id 
+from testers_answers_counts t, leadership l
+where t.id_tester = 56
+and l.id = t.id_leadership
+order by leadership_percentage desc
+limit 0,4) as top3
+where counter &gt;= 2
+and leadership_id in (top3.id)</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

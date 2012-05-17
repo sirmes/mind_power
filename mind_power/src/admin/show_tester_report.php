@@ -49,7 +49,8 @@ while($r = mysql_fetch_assoc($strategic_management)) {
 }
 
 //================== Bring tester data ===============
-$query = "select t.id as tester_id, title, t.name, email, c.name company from testers t, companies c where c.id = t.id_company and t.id = $tester_id";
+$query = "select t.id as tester_id, title, t.name, email, c.name company, date_format(created_date, '%M %D, %Y') created_date".
+			" from testers t, companies c where c.id = t.id_company and t.id = $tester_id";
 $tester = $DB->qry($query);
 
 $tester_json = array();
@@ -77,8 +78,7 @@ $query = "select s.name strategic_management, l.name as leadership, t.leadership
 		" where id_tester = $tester_id ".
 		"	and t.id_leadership = l.id ".
 		"	and s.id = t.id_strategic_management ".
-		"group by s.name, l.name, t.leadership_count, t.leadership_percentage ".
-		"order by s.id, l.name, t.leadership_percentage";
+		"order by s.id, t.leadership_percentage";
 
 $tester_answers_counts_grouped_by_leadership = $DB->qry($query);
 
@@ -103,20 +103,26 @@ while($r = mysql_fetch_assoc($tester_answers_submitted)) {
 	$answers_answers_submitted_json[] = $r;
 }
 
-//================== Bring all answers that were NOT submitted ===============
-$query = "select l.name as leadership, q.question ".
-"from testers_answers t, questions_answers q, leadership l ".
+//================== Bring all questions(statements) that were NOT submitted ===============
+$query = "select l.name as leadership, q.question, q.id ".
+"from questions_answers q, leadership l, ".
+" ( ".
+"select l.id ".
+"from testers_answers_counts t, leadership l ".
 "where t.id_tester = $tester_id ".
-"	and t.id_question = q.id ".
-"	and q.id_leadership = l.id ".
-"	and l.active = 'A' ".
-"	and q.id not in ( ".
-"			select q.id ".
-"			from testers_answers t, questions_answers q ".
-"			where t.id_tester = $tester_id ".
-" 			and t.id_question = q.id) ".
+"	and l.id = t.id_leadership ".
+"order by leadership_percentage asc ".
+"limit 0,4) as bottom_leadership ".
+"where q.id_leadership = l.id ".
+"and q.id not in ( ".
+"select q.id ".
+"from testers_answers t, questions_answers q ".
+"where t.id_tester = $tester_id ".
+"	and t.id_question = q.id) ".
+"	and l.id in (bottom_leadership.id) ".
 "group by name, question ".
 "order by name, question";
+
 
 $tester_answers_not_submitted = $DB->qry($query);
 
@@ -126,17 +132,25 @@ while($r = mysql_fetch_assoc($tester_answers_not_submitted)) {
 }
 
 //================== Bring all answers picked twice ===============
-$query = "select * from ".
-		"( ".
-		" select s.name, question, count(question) as counter ".
-		" from questions_answers q, testers_answers t, leadership s ".
-		" where t.id_tester = $tester_id ".
-		" 	and t.id_question = q.id ".
-		"	and s.id = q.id_leadership ".
-		"group by s.name ".
-		"order by 3 desc, 1, 2 ".
-		") as results ".
-		" where counter >= 2";
+$query = "select leadership_id, leadership, question, leadership_percentage ".
+"from ". 
+" ( ".
+" select q.id_leadership as leadership_id, question, count(question) as counter ".
+" from questions_answers q, testers_answers t ".
+" where t.id_tester = $tester_id ".
+" 	and t.id_question = q.id ".
+"	group by question ".
+"	order by 3 desc, 1, 2 ".
+") as results, ".
+"(select l.id, l.name as leadership, t.leadership_percentage ".
+"from testers_answers_counts t, leadership l ".
+"where t.id_tester = $tester_id ".
+"and l.id = t.id_leadership ".
+"order by leadership_percentage desc ".
+"limit 0,4) as top3 ".
+"where counter >= 2 ".
+"	and leadership_id in (top3.id) ".
+"order by 4 desc";
 
 $tester_answers_picked_twiced = $DB->qry($query);
 
@@ -145,7 +159,35 @@ while($r = mysql_fetch_assoc($tester_answers_picked_twiced)) {
 	$answers_answers_picked_twice_json[] = $r;
 }
 
+//================== Bring top 3/4 ===============
+$query = "select l.name as leadership, t.leadership_percentage ".
+		"from testers_answers_counts t, leadership l ".
+		"where t.id_tester = $tester_id ".
+		"	and l.id = t.id_leadership ".
+		"order by leadership_percentage desc ".
+		"limit 0,4";
 
+$top_3 = $DB->qry($query);
+
+$top_3_json = array();
+while($r = mysql_fetch_assoc($top_3)) {
+	$top_3_json[] = $r;
+}
+
+//================== Bring bottom 3/4 ===============
+$query = "select l.name as leadership, t.leadership_percentage ".
+		"from testers_answers_counts t, leadership l ".
+		"where t.id_tester = $tester_id ".
+		"	and l.id = t.id_leadership ".
+		"order by leadership_percentage asc ".
+		"limit 0,4";
+
+$bottom_3 = $DB->qry($query);
+
+$bottom_3_json = array();
+while($r = mysql_fetch_assoc($bottom_3)) {
+	$bottom_3_json[] = $r;
+}
 
 // print "<hr>";
 // print "average score: " . json_encode($rows_score_json) . "<br>";
@@ -165,6 +207,10 @@ while($r = mysql_fetch_assoc($tester_answers_picked_twiced)) {
 // print "All answers NOT submitted: " . json_encode($answers_answers_not_submitted_json);
 // print "<hr>";
 // print "All answers picked twice: " . json_encode($answers_answers_picked_twice_json);
+// print "<hr>";
+// print "Top 3: " . json_encode($top_3_json);
+// print "<hr>";
+// print "Bottom 3: " . json_encode($bottom_3_json);
 
 
 ?>

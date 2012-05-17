@@ -60,10 +60,13 @@ while ($i < $num) {
 	$answer_group=mysql_result($questions,$i,"answer_group");
 	$question=mysql_result($questions,$i,"question");
 	
-	if ($i%2 ==0)
+	if ($i%2 ==0) {
+		$choice = "a";
 		$row_color = "";
-	else
+	} else {
+		$choice = "b";
 		$row_color = "gray";
+	}
 ?>
 <tr bgcolor="<?php echo "$row_color"; ?>"> 
 <td><font face="Arial, Helvetica, sans-serif">
@@ -71,14 +74,17 @@ while ($i < $num) {
 			echo "$answer_group"; 
 	?>
 	</font></td>
-<!--
+
+<!-- 	
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$id_strategic_management"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$id_leadership"; ?></font></td>
--->
+ -->
+ 
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$question"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif">
-	<input type="hidden" name="strategic_management<? echo "$answer_group"; ?>" value="<? echo "$id_strategic_management"; ?>" />
-	<input type="hidden" name="leadership<? echo "$answer_group"; ?>" value="<? echo "$id_leadership"; ?>" />
+	<input type="hidden" name="choice<? echo "$id"; ?>" value="<? echo "$choice"; ?>" />
+	<input type="hidden" name="strategic_management<? echo "$answer_group"; ?>_<? echo "$choice"; ?>" value="<? echo "$id_strategic_management"; ?>" />
+	<input type="hidden" name="leadership<? echo "$answer_group"; ?>_<? echo "$choice"; ?>" value="<? echo "$id_leadership"; ?>" />
 	<input type="radio" name="answer<? echo "$answer_group"; ?>" value="<? echo "$id"; ?>" 
 	<?php
 		if ($test_on == "true" && ($i % 2 ==0)) {

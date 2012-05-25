@@ -20,6 +20,11 @@ if ($test_on == "true") {
 ?>
 <script type='text/javascript'>
 function validate(form){
+	if(!validateQuestions()){
+		alert('Please answer all questions!');
+		return;
+	}
+	
 	if (form.title.value.trim() == '') {
 		alert('Please enter the title!');
 		form.title.focus();
@@ -49,11 +54,6 @@ function validate(form){
 		return;
 	}
 
-	if(validateQuestions()){
-		alert('Please answer all questions!');
-		return;
-	}
-
 	form.submit();
 }
 
@@ -71,9 +71,22 @@ function validateEmail(value)
 	
 function validateQuestions() {
 
-	//answer3
+	var inputs = document.getElementById('questions_statements').getElementsByTagName("input");
+	var found = [];
 	
-	return false;
+	for(var i=0, len=inputs.length; i<len; i++){
+        if(inputs[i].name.match(/^answer\d+$/) && inputs[i].type =='radio'){
+        	found.push(inputs[i]);
+        }
+    }
+
+	for(var i=0; i < found.length; i=i+2) {
+		if (found[i].checked == false && found[i+1].checked == false){		
+			return false;
+		}
+	}
+	
+	return true;
 }
 </script>
 
@@ -102,7 +115,7 @@ while ($i < $num_companies) {
 <input type="button" onClick="validate(document.send_questions);" value="Send your anwsers">
 <p>
 
-<table border="1" cellspacing="2" cellpadding="2">
+<table border="1" cellspacing="2" cellpadding="2" id="questions_statements">
 <tr bgcolor="orange"> 
 <th><font face="Arial, Helvetica, sans-serif">Question</font></th>
 <th colspan="2" ><font face="Arial, Helvetica, sans-serif">Answer</font></th>
@@ -143,13 +156,7 @@ while ($i < $num) {
 	<input type="hidden" name="choice<? echo "$id"; ?>" value="<? echo "$choice"; ?>" />
 	<input type="hidden" name="strategic_management<? echo "$answer_group"; ?>_<? echo "$choice"; ?>" value="<? echo "$id_strategic_management"; ?>" />
 	<input type="hidden" name="leadership<? echo "$answer_group"; ?>_<? echo "$choice"; ?>" value="<? echo "$id_leadership"; ?>" />
-	<input type="radio" name="answer<? echo "$answer_group"; ?>" value="<? echo "$id"; ?>" 
-	<?php
-		if ($test_on == "true" && ($i % 2 ==0)) {
-			echo "checked='checked'";
-		} 
-	?>
-	 >
+	<input type="radio" name="answer<? echo "$answer_group"; ?>" id="answer<? echo "$answer_group"; ?>" value="<? echo "$id"; ?>" <?php if ($test_on == "true" && ($i % 2 ==0)) { echo "checked='checked'"; } ?> >
 </font></td>
 </tr>
 <?

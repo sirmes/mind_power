@@ -104,8 +104,13 @@ function setAction(textElem, elem, action){
 		return;
 	}
 
-//	if (validateQuestionNumbers()) {
-//	}
+	if (action == 'C') {
+		if (!validateQuestionNumbers()) {
+			alert('Please review the group questions.');
+			return;
+		}	
+	}
+	
 
 	elem.value = action;
 	document.question.submit();
@@ -113,16 +118,33 @@ function setAction(textElem, elem, action){
 
 function validateQuestionNumbers() {
 
-	var count=1;
-	for(var i=0; i <= 144; i++) {
-		alert('current change answer group: ' + 'change_answer_group'+i);
-		var element = document.getElementById('change_answer_group'+i);
+	var inputs = document.getElementById('questions_statements').getElementsByTagName("input");
+	var found = [];
+	
+	for(var i=0, len=inputs.length; i<len; i++){
+        if(inputs[i].name.match(/^change_answer_group\d+$/) && inputs[i].type =='text'){
+        	found.push(inputs[i]);
+        }
+    }
 
-		last
-		break;
+	for(var i=0; i < found.length; i=i+2) {
+		if (!IsNumeric(found[i].value) || !IsNumeric(found[i+1].value)) {
+			alert('Please review questions: ' + (i+1) + " or " + (i+2) + " because they are not numeric!");
+			found[i].focus();
+			return false;
+		} 
+		
+		if (found[i].value != found[i+1].value){		
+			return false;
+		}
 	}
 
-	return false;
+	return true;;
+}
+
+function IsNumeric(input)
+{
+    return (input - 0) == input && input.length > 0;
 }
 
 function setQuestion_id(question_id){
@@ -139,7 +161,7 @@ function setQuestion_id(question_id){
 <input type="hidden" name="action" id="action" value="" />
 <input type="hidden" name="question_id" id="question_id" value="" />
 <hr>
-<table border="1" cellspacing="2" cellpadding="2">
+<table border="1" cellspacing="2" cellpadding="2" id="questions_statements">
 <tr> 
 <th><font face="Arial, Helvetica, sans-serif">Question *</font></th>
 <th><font face="Arial, Helvetica, sans-serif">Strategic management</font></th>

@@ -18,8 +18,66 @@ if ($test_on == "true") {
 }
 
 ?>
+<script type='text/javascript'>
+function validate(form){
+	if (form.title.value.trim() == '') {
+		alert('Please enter the title!');
+		form.title.focus();
+		return;
+	}
 
-<form action="insert.php" method="post">
+	if (form.name.value.trim() == '') {
+		alert('Please enter the tester name!');
+		form.name.focus();
+		return;
+	}
+
+	if (form.email.value.trim() == '') {
+		alert('Please enter the email!');
+		form.email.focus();
+		return;
+	}
+
+	if (!validateEmail(form.email.value)){
+		form.email.focus();
+		return;
+	}
+	
+	if (form.company_id.value == 0) {
+		alert('Please select the company!');
+		form.company_id.focus();
+		return;
+	}
+
+	if(validateQuestions()){
+		alert('Please answer all questions!');
+		return;
+	}
+
+	form.submit();
+}
+
+function validateEmail(value)
+{
+	var atpos=value.indexOf("@");
+	var dotpos=value.lastIndexOf(".");
+	if (atpos<1 || dotpos<atpos+2 || dotpos+2>=value.length)  {
+	  alert("Not a valid e-mail address!");
+	  return false;
+	}
+
+	return true;
+}
+	
+function validateQuestions() {
+
+	//answer3
+	
+	return false;
+}
+</script>
+
+<form action="insert.php" method="post" name="send_questions" id="send_questions">
 Title: <input type="text" name="title"><br>
 Name: <input type="text" name="name"><br>
 E-mail: <input type="text" name="email"><br>
@@ -41,7 +99,7 @@ while ($i < $num_companies) {
 
 <hr>
 <p>
-<input type="Submit" value="Send your anwsers">
+<input type="button" onClick="validate(document.send_questions);" value="Send your anwsers">
 <p>
 
 <table border="1" cellspacing="2" cellpadding="2">
@@ -101,5 +159,5 @@ $temp_answer_group = $answer_group;
 ?>
 </table>
 <p>
-<input type="Submit" value="Send your anwsers">
+<input type="button" onClick="validate(document.send_questions);" value="Send your anwsers">
 </form>

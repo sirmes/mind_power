@@ -12,12 +12,13 @@ if (strcmp($action,"A") == 0) {
 	$add_strategic_management_id = $_POST['add_strategic_management_id'];
 	$add_leadership_id = $_POST['add_leadership_id'];
 	$add_answer_group = $_POST['add_answer_group'];
-	$add_question_name = $_POST['add_question_name'];
+	$add_question_name = htmlspecialchars($_POST['add_question_name']);
 	$add_question_status = $_POST['add_question_status'];
 
 // 	echo "Parameters: $add_strategic_management_id, $add_leadership_id, $add_answer_group, $add_question_name, $add_question_status";
 	
-	$query="INSERT INTO questions_answers VALUES ('', $add_strategic_management_id, $add_leadership_id, $add_answer_group, '$add_question_name')";
+	$query="INSERT INTO questions_answers VALUES ('', $add_strategic_management_id, $add_leadership_id, $add_answer_group, '".
+	str_replace('"','\'',$add_question_name). "')";
 	$result = $DB->qry($query);
 	
 // 	echo "Question added: $result";
@@ -31,10 +32,10 @@ else {
 		$change_strategic_management_id = $_POST['change_strategic_management_id'.$question_id.''];
 		$change_leadership_id = $_POST['change_leadership_id'.$question_id.''];
 		$change_answer_group = $_POST['change_answer_group'.$question_id.''];
-		$change_question_name = $_POST['change_question_name'.$question_id.''];
+		$change_question_name = htmlspecialchars($_POST['change_question_name'.$question_id.'']);
 		
 		$query="UPDATE questions_answers SET ID_strategic_management=$change_strategic_management_id, ID_leadership=$change_leadership_id, ".
-				 "ANSWER_GROUP=$change_answer_group, QUESTION='$change_question_name' ".
+				 "ANSWER_GROUP=$change_answer_group, QUESTION='". str_replace('"','\'',$change_question_name)."' ".
 				 "WHERE ID = $question_id";
 		
 // 		echo "SQL => $query <br>";
@@ -91,12 +92,37 @@ while ($j < $num_leadership) {
 
 echo "<b><center>Questions</center></b><br><br>";
 
+
 ?>
+<?php include("return_root_admin.php"); ?>
 
 <script type='text/javascript'>
-function setAction(elem, action){
+function setAction(textElem, elem, action){
+	if (textElem.value.trim() == '') {
+		alert('Please enter the answer!');
+		textElem.focus();
+		return;
+	}
+
+//	if (validateQuestionNumbers()) {
+//	}
+
 	elem.value = action;
 	document.question.submit();
+}
+
+function validateQuestionNumbers() {
+
+	var count=1;
+	for(var i=0; i <= 144; i++) {
+		alert('current change answer group: ' + 'change_answer_group'+i);
+		var element = document.getElementById('change_answer_group'+i);
+
+		last
+		break;
+	}
+
+	return false;
 }
 
 function setQuestion_id(question_id){
@@ -134,7 +160,7 @@ while ($i < $num_questions) {
 	?>
 	<tr> 
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="text" size="5" name="change_answer_group<? echo "$question_id"; ?>" value="<? echo "$answer_group"; ?>"/>
+			<input type="text" size="5" name="change_answer_group<? echo "$question_id"; ?>" id="change_answer_group<? echo "$question_id"; ?>" value="<? echo "$answer_group"; ?>"/>
 			</font>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">			
@@ -160,11 +186,11 @@ while ($i < $num_questions) {
 				?>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<textarea rows="5" cols="60" name="change_question_name<? echo "$question_id"; ?>"><? echo "$question_name"; ?></textarea>
+			<textarea rows="5" cols="60" name="change_question_name<? echo "$question_id"; ?>" id="change_question_name<? echo "$question_id"; ?>" ><? echo "$question_name"; ?></textarea>
 		</font>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="button" value="Change" onclick="setQuestion_id('<? echo "$question_id"; ?>'); setAction(document.getElementById('action'), 'C')" /></font>
+			<input type="button" value="Change" onclick="setQuestion_id('<? echo "$question_id"; ?>'); setAction(document.getElementById('change_question_name<? echo "$question_id"; ?>'), document.getElementById('action'), 'C')" /></font>
 		</td>
 	</tr>
 	
@@ -205,7 +231,8 @@ while ($i < $num_questions) {
 		<th><font face="Arial, Helvetica, sans-serif">
 			<textarea rows="5" cols="60" name="add_question_name">New question/answer</textarea>
 		</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('action'), 'A')" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('add_question_name'), document.getElementById('action'), 'A')" /></font></th>
 	</tr>
 </table>
 </form>
+<?php include("return_root_admin.php"); ?>

@@ -9,15 +9,15 @@ $action = $_POST['action'];
 if (strcmp($action,"A") == 0) {
 	//Add
 	//echo "In add";
-	$add_company_name = $_POST['add_company_name'];
-	$add_company_status = $_POST['add_company_status'];
+	$add_company_name = htmlspecialchars($_POST['add_company_name']);
+	$add_company_status = htmlspecialchars($_POST['add_company_status']);
 
 	//echo "Parameters: $add_company_name, $add_company_status";
 	
-	$query="INSERT INTO companies VALUES ('', '$add_company_name', '$add_company_status')";
+	$query="INSERT INTO companies VALUES ('', '". str_replace('"','\'',$add_company_name) ."', '$add_company_status')";
 	$result = $DB->qry($query);
 	
-	//echo "Company added: $result";
+	echo "Company added";
 }
 else {
 	$company_id = $_POST['company_id'];
@@ -28,13 +28,13 @@ else {
 		$change_company_name = $_POST['change_company_name'.$company_id.''];
 		$change_company_status = $_POST['change_company_status'.$company_id.''];
 		
-		$query="UPDATE companies SET NAME='$change_company_name', ACTIVE='$change_company_status' WHERE ID = $company_id";
+		$query="UPDATE companies SET NAME='". str_replace('"','\'',$change_company_name) ."', ACTIVE='$change_company_status' WHERE ID = $company_id";
 		
 		//echo "SQL => $query <br>";
 		
 		$result = $DB->qry($query);
 		
-		//echo "Company updated: $result";
+		echo "Company updated";
 	}
 } 
 	
@@ -48,7 +48,12 @@ echo "<b><center>Companies</center></b><br><br>";
 ?>
 
 <script type='text/javascript'>
-function setAction(elem, action){
+function setAction(textElem, elem, action){
+	if (textElem.value.trim() == '') {
+		alert('Please enter the company name!');
+		textElem.focus();
+		return;
+	}
 	elem.value = action;
 	document.company.submit();
 }
@@ -78,7 +83,7 @@ while ($i < $num_companies) {
 	?>
 	<tr> 
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="text" name="change_company_name<? echo "$company_id"; ?>" value="<? echo "$company_name"; ?>" /></font>
+			<input type="text" name="change_company_name<? echo "$company_id"; ?>" id="change_company_name<? echo "$company_id"; ?>" value="<? echo "$company_name"; ?>" /></font>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
 		 	<select name="change_company_status<? echo "$company_id"; ?>">
@@ -96,7 +101,7 @@ while ($i < $num_companies) {
 			</select>
 		</font></td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="button" value="Change" onclick="setCompany_id('<? echo "$company_id"; ?>'); setAction(document.getElementById('action'), 'C')" /></font>
+			<input type="button" value="Change" onclick="setCompany_id('<? echo "$company_id"; ?>'); setAction(document.getElementById('change_company_name<? echo "$company_id"; ?>'), document.getElementById('action'), 'C')" /></font>
 		</td>
 	</tr>
 	
@@ -109,16 +114,17 @@ while ($i < $num_companies) {
 <table border="1" cellspacing="2" cellpadding="2">
 	<tr> 
 		<th><font face="Arial, Helvetica, sans-serif">Company:</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_company_name" value="New company" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_company_name" id="add_company_name" value="New company" /></font></th>
 		<th><font face="Arial, Helvetica, sans-serif"><select name="add_company_status">
 														<option value="A">Active</option>
 														<option value="I">Inactive</option>
 													 </select>
 		</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('action'), 'A')" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('add_company_name'), document.getElementById('action'), 'A')" /></font></th>
 	</tr>
 </table>
 <p>
 * A means = Active / I means = Inactive
 <p>
 </form>
+<?php include("return_root_admin.php"); ?>

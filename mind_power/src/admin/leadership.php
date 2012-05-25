@@ -11,15 +11,15 @@ if (strcmp($action,"A") == 0) {
 	//echo "In add";
 	
 	$add_strategic_management_id = $_POST['add_strategic_management_id'];
-	$add_leadership_name = $_POST['add_leadership_name'];
+	$add_leadership_name = htmlspecialchars($_POST['add_leadership_name']);
 	$add_leadership_status = $_POST['add_leadership_status'];
 
 // 	echo "Parameters: $add_leadership_name, $add_leadership_status";
 	
-	$query="INSERT INTO leadership VALUES ('', $add_strategic_management_id ,'$add_leadership_name', '$add_leadership_status')";
+	$query="INSERT INTO leadership VALUES ('', $add_strategic_management_id ,'". str_replace('"','\'',$add_leadership_name) ."', '$add_leadership_status')";
 	$result = $DB->qry($query);
 	
-// 	echo "Leadership item added: $result";
+	echo "Leadership item added";
 }
 else {
 	$leadership_id = $_POST['leadership_id'];
@@ -28,10 +28,11 @@ else {
 	if (strcmp($action,"C") == 0 && $leadership_id != '') {
 		//Update
 		$change_strategic_management_id = $_POST['change_strategic_management_id'.$leadership_id.''];
-		$change_leadership_name = $_POST['change_leadership_name'.$leadership_id.''];
+		$change_leadership_name = htmlspecialchars($_POST['change_leadership_name'.$leadership_id.'']);
 		$change_leadership_status = $_POST['change_leadership_status'.$leadership_id.''];
 		
-		$query="UPDATE leadership SET ID_strategic_management='$change_strategic_management_id', NAME='$change_leadership_name', ACTIVE='$change_leadership_status' WHERE ID = $leadership_id";
+		$query="UPDATE leadership SET ID_strategic_management='$change_strategic_management_id', NAME='". str_replace('"','\'',$change_leadership_name)		  
+		."', ACTIVE='$change_leadership_status' WHERE ID = $leadership_id";
 		
 // 		echo "SQL => $query <br>";
 		
@@ -70,7 +71,12 @@ echo "<b><center>Leadership</center></b><br><br>";
 ?>
 
 <script type='text/javascript'>
-function setAction(elem, action){
+function setAction(textElem, elem, action){
+	if (textElem.value.trim() == '') {
+		alert('Please enter the leadership name!');
+		textElem.focus();
+		return;
+	}
 	elem.value = action;
 	document.leadership.submit();
 }
@@ -114,7 +120,7 @@ while ($i < $num_leadership) {
 				?>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="text" name="change_leadership_name<? echo "$leadership_id"; ?>" value="<? echo "$leadership_name"; ?>" size="60"/></font>
+			<input type="text" name="change_leadership_name<? echo "$leadership_id"; ?>" id="change_leadership_name<? echo "$leadership_id"; ?>" value="<? echo "$leadership_name"; ?>" size="60"/></font>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
 		 	<select name="change_leadership_status<? echo "$leadership_id"; ?>">
@@ -132,7 +138,7 @@ while ($i < $num_leadership) {
 			</select>
 		</font></td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="button" value="Change" onclick="setLeadership_id('<? echo "$leadership_id"; ?>'); setAction(document.getElementById('action'), 'C')" /></font>
+			<input type="button" value="Change" onclick="setLeadership_id('<? echo "$leadership_id"; ?>'); setAction(document.getElementById('change_leadership_name<? echo "$leadership_id"; ?>'), document.getElementById('action'), 'C')" /></font>
 		</td>
 	</tr>
 	
@@ -156,16 +162,17 @@ while ($i < $num_leadership) {
 													?>
 													</select>
 		</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_leadership_name" value="New leadership item" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_leadership_name" id="add_leadership_name" value="New leadership" /></font></th>
 		<th><font face="Arial, Helvetica, sans-serif"><select name="add_leadership_status">
 														<option value="A">Active</option>
 														<option value="I">Inactive</option>
 													 </select>
 		</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('action'), 'A')" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('add_leadership_name'), document.getElementById('action'), 'A')" /></font></th>
 	</tr>
 </table>
 <p>
 * A means = Active / I means = Inactive
 <p>
 </form>
+<?php include("return_root_admin.php"); ?>

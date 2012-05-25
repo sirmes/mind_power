@@ -2,6 +2,10 @@
 include("DB.php");
 $DB = DB::Open();
 
+$token = crypt("samuel irmes sirmes@gmail.com". rand(1,100), 'mind');
+echo "$token<br>";
+DIE("STOP");
+
 $test_on = htmlspecialchars($_GET["test_on"]);
 echo "test is on: ".$test_on."<br>";
 

@@ -9,15 +9,15 @@ $action = $_POST['action'];
 if (strcmp($action,"A") == 0) {
 	//Add
 	//echo "In add";
-	$add_strategic_management_name = $_POST['add_strategic_management_name'];
-	$add_strategic_management_status = $_POST['add_strategic_management_status'];
+	$add_strategic_management_name = htmlspecialchars($_POST['add_strategic_management_name']);
+	$add_strategic_management_status = htmlspecialchars($_POST['add_strategic_management_status']);
 
 // 	echo "Parameters: $add_strategic_management_name, $add_strategic_management_status";
 	
-	$query="INSERT INTO strategic_management VALUES ('', '$add_strategic_management_name', '$add_strategic_management_status')";
+	$query="INSERT INTO strategic_management VALUES ('', '". str_replace('"','\'',$add_strategic_management_name) ."', '$add_strategic_management_status')";
 	$result = $DB->qry($query);
 	
-// 	echo "strategic_management added: $result";
+	echo "strategic_management added";
 }
 else {
 	$strategic_management_id = $_POST['strategic_management_id'];
@@ -28,7 +28,7 @@ else {
 		$change_strategic_management_name = $_POST['change_strategic_management_name'.$strategic_management_id.''];
 		$change_strategic_management_status = $_POST['change_strategic_management_status'.$strategic_management_id.''];
 		
-		$query="UPDATE strategic_management SET NAME='$change_strategic_management_name', ACTIVE='$change_strategic_management_status' WHERE ID = $strategic_management_id";
+		$query="UPDATE strategic_management SET NAME='". str_replace('"','\'',$change_strategic_management_name) ."', ACTIVE='$change_strategic_management_status' WHERE ID = $strategic_management_id";
 		
 // 		echo "SQL => $query <br>";
 		
@@ -51,7 +51,12 @@ echo "<b><center>Strategic management</center></b><br><br>";
 ?>
 
 <script type='text/javascript'>
-function setAction(elem, action){
+function setAction(textElem, elem, action){
+	if (textElem.value.trim() == '') {
+		alert('Please enter the strategic management name!');
+		textElem.focus();
+		return;
+	}
 	elem.value = action;
 	document.strategic_management.submit();
 }
@@ -81,7 +86,7 @@ while ($i < $num_strategic_management) {
 	?>
 	<tr> 
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="text" name="change_strategic_management_name<? echo "$strategic_management_id"; ?>" value="<? echo "$strategic_management_name"; ?>" size="60"/></font>
+			<input type="text" name="change_strategic_management_name<? echo "$strategic_management_id"; ?>" id="change_strategic_management_name<? echo "$strategic_management_id"; ?>" value="<? echo "$strategic_management_name"; ?>" size="60"/></font>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
 		 	<select name="change_strategic_management_status<? echo "$strategic_management_id"; ?>">
@@ -99,7 +104,7 @@ while ($i < $num_strategic_management) {
 			</select>
 		</font></td>
 		<td><font face="Arial, Helvetica, sans-serif">
-			<input type="button" value="Change" onclick="setStrategic_management_id('<? echo "$strategic_management_id"; ?>'); setAction(document.getElementById('action'), 'C')" /></font>
+			<input type="button" value="Change" onclick="setStrategic_management_id('<? echo "$strategic_management_id"; ?>'); setAction(document.getElementById('change_strategic_management_name<? echo "$strategic_management_id"; ?>'), document.getElementById('action'), 'C')" /></font>
 		</td>
 	</tr>
 	
@@ -112,16 +117,17 @@ while ($i < $num_strategic_management) {
 <table border="1" cellspacing="2" cellpadding="2">
 	<tr> 
 		<th><font face="Arial, Helvetica, sans-serif">Strategic management:</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_strategic_management_name" value="New strategic management" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="text" name="add_strategic_management_name" id="add_strategic_management_name" value="New strategic management" size="27" /></font></th>
 		<th><font face="Arial, Helvetica, sans-serif"><select name="add_strategic_management_status">
 														<option value="A">Active</option>
 														<option value="I">Inactive</option>
 													 </select>
 		</font></th>
-		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('action'), 'A')" /></font></th>
+		<th><font face="Arial, Helvetica, sans-serif"><input type="button" value="Add" onclick="setAction(document.getElementById('add_strategic_management_name'), document.getElementById('action'), 'A')" /></font></th>
 	</tr>
 </table>
 <p>
 * A means = Active / I means = Inactive
 <p>
 </form>
+<?php include("return_root_admin.php"); ?>

@@ -2,9 +2,9 @@
 include("DB.php");
 $DB = DB::Open();
 
-$title = $_POST["title"];
-$name = $_POST["name"];
-$email = $_POST["email"];
+$title = htmlspecialchars($_POST["title"]);
+$name = htmlspecialchars($_POST["name"]);
+$email = htmlspecialchars($_POST["email"]);
 $id_company = $_POST["company_id"];
 $answer_ids = array();
 $total_questions_to_calculate_percentage = 72;
@@ -39,13 +39,6 @@ while ($row = mysql_fetch_assoc($result)) {
 }
 
 echo "Printing leadership values = >"; print_r($leadership);
-// die("<hr>AHAHA IT STOPPED");
-
-// //Set the percentages
-// foreach ($leadership as $i => $value) {
-// 	$leadership[$i]["leadership_percentage"] = round(($current_leadership["leadership_count"] / $total_questions_to_calculate_percentage) * 100, 2);
-// 	echo "leadership_percentage: ".$leadership[$i]["leadership_percentage"]."<br>";
-// }
 echo "Printing leadership values with percentages = >"; print_r($leadership);
 
 echo "<hr>";
@@ -56,7 +49,13 @@ echo "<hr>";
 
 echo "Going to store tester data into DB <br>";
 //Create tester record
-$query = "INSERT INTO testers VALUES ('', $id_company, '$title','$name','$email', SYSDATE())";
+$token = crypt($name.$email. rand(1,100), 'mind');
+$query = "INSERT INTO testers VALUES ('', $id_company, '".
+										str_replace('"','\'',$title)."','".
+										str_replace('"','\'',$name)."','".
+										str_replace('"','\'',$email)."', SYSDATE(),'". 
+										str_replace('"','\'',$token)."')";
+
 $result = $DB->qry($query);
 echo "Tester info stored in DB: $result <br>";
 echo "<hr>";

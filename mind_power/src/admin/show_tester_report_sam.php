@@ -3,26 +3,12 @@ include("../DB.php");
 $DB = DB::Open();
 
 $tester_id = $_POST['tester_id'];
-$tester_token = $_GET['token'];
 
-//==================  Get tester id by token ==================
-if ($tester_id == '' && $tester_token != '') {
-	$query="select id from testers where token = '$tester_token'";
-	$testers = $DB->qry($query);
-	
-	$num_testers = $DB->qry_row_num($testers);
-	
-	while ($i < $num_testers) {
-		$tester_id= mysql_result($testers,$i,"id");
-		break;
-	}
-} 
-
-if ($tester_id == '' && $tester_token == '')
+if ($tester_id == '')
 	$tester_id = htmlspecialchars($_GET["tester_id"]);
 
 
-// echo "Tester id: $tester_id <br>";
+//echo "Tester id: $tester_id <br>";
 
 //================== Average score ===============
 $query="select score from average_score";
@@ -235,13 +221,10 @@ var json2 = <?php echo json_encode($tester_json); ?>;
 var json3 = <?php echo json_encode($rows_strategic_management_json); ?>;
 var json4 = <?php echo json_encode($leadership_json); ?>;
 var json5 = <?php echo json_encode($answers_counts_json); ?>;
-var json6 = <?php echo json_encode($answers_counts_json); ?>;
-var json7 = <?php echo json_encode($answers_counts_grouped_by_ledership_json); ?>;
-var temp123 = <?php echo json_encode($answers_answers_submitted_json); ?>;
-var json8 = <?php echo json_encode($answers_answers_picked_twice_json); ?>;
-var json9 = <?php echo json_encode($answers_answers_not_submitted_json); ?>;
-var top3 = <?php echo json_encode($top_3_json); ?>;
-var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
+var json6 = <?php echo json_encode($answers_counts_grouped_by_ledership_json); ?>;
+var json7 = <?php echo json_encode($answers_answers_submitted_json); ?>;
+var json8 = <?php echo json_encode($answers_answers_not_submitted_json); ?>;
+var json9 = <?php echo json_encode($answers_answers_picked_twice_json); ?>;
 
 //-->
 </script>
@@ -266,12 +249,10 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 			#page8-2 ul li{padding:18px;}
 			#nav-control a {padding-right:5px}
 			#pie-logo{background: url("img/pielogo-1.png") repeat scroll -26px -19px transparent;}
-			#chart{width:800px; height:600px;}
-			#mp-strategic{background: url(img/mp-strategic.png) no-repeat scroll 0 0 transparent; height: 133px;  left: -50px;  position: absolute;  top: 2px;  width: 265px;}
-			#mp-business{background: url(img/mp-business.png) no-repeat scroll 0 0 transparent;  bottom: 10px; height: 133px; position: absolute; right: 360px; width: 265px;}
-			#mp-people{ background: url("img/mp-people.png") no-repeat scroll 0 0 transparent; height: 133px;    position: absolute;    right: 50px;    top: 33px;    width: 265px;}
-			.top3{ 	background: url("img/page8-box-top.png") no-repeat scroll 0 0 transparent;    height: 45px;    padding-left: 23px;    padding-top: 23px;}
-			.bottom3{ background: url("img/page8-box-bot.png") no-repeat scroll 0 0 transparent;    height: 40px;    padding-left: 5px;    position: relative;}
+			#chart{width:600px; height:600px;}
+			#mp-strategic{background: url(img/mp-strategic.png) no-repeat scroll 0 0 transparent; height: 133px;  left: -137px;  position: absolute;  top: 2px;  width: 265px;}
+			#mp-business{background: url(img/mp-business.png) no-repeat scroll 0 0 transparent;  bottom: 10px; height: 133px; position: absolute; right: 468px; width: 265px;}
+			#mp-people{ background: url("img/mp-people.png") no-repeat scroll 0 0 transparent; height: 133px;    position: absolute;    right: 100px;    top: 33px;    width: 265px;}
 		</style>
 	<body>
 			<div id="main-container">
@@ -291,8 +272,6 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 				<a href="javascript:mP.page6.controller();" > Page 6 </a>
 				<a href="javascript:mP.page7.controller();" > Page 7 </a>
 				<a href="javascript:mP.page8.controller();" > Page 8 </a>
-				<a href="javascript:mP.page9.controller();" > Page 9 </a>
-				<a href="javascript:mP.page10.controller();" > Page 10 </a>
 			</div>
 		</body>
 		<script type="text/javascript" >
@@ -311,7 +290,7 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 							var _string =[];
 							_string.push('<div id="page1-1" style="left:95px; top:100px; position:relative;"><img src="img/page1-1.png" /></div>');
 							_string.push('<div id="page1-2" style="position:relative; position: relative; text-align: center; top: 100px; font-size: 50px;" >'+
-								'<span>' + $(json2).first().prop('title') + '.' + $(json2).first().prop('name') + '</span><br /><span>'+$(json2).first().prop('created_date')+'</span></div>');
+								'<span>' + $(json2).first().prop('title') + '.' + $(json2).first().prop('name') + '</span><br /><span>March 17th, 2012</span></div>');
 							_string = _string.join('');
 							mP.$mid_container.html(_string);
 							_string =[];
@@ -359,32 +338,32 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 							var chart;
 							var colors = Highcharts.getOptions().colors,
 								categories = [
-									$(json7).get(0)['leadership'] + '<br>'  + $(json7).get(0)['leadership_percentage'] + '%', 
-									$(json7).get(1)['leadership'] + '<br>'  + $(json7).get(1)['leadership_percentage'] + '%', 
-									$(json7).get(2)['leadership'] + '<br>'  + $(json7).get(2)['leadership_percentage'] + '%',
+									'mP Empathy <br>' + $(json5).get(0)['leadership_percentage'] + '%', 
+									'mP Excellence <br>' + $(json5).get(1)['leadership_percentage']+ '%', 
+									'mP Touch <br>' + $(json5).get(2)['leadership_percentage']+ '%',
 									'', 
-									$(json7).get(3)['leadership'] + '<br>'  + $(json7).get(3)['leadership_percentage'] + '%', 
-									$(json7).get(4)['leadership'] + '<br>'  + $(json7).get(4)['leadership_percentage'] + '%', 
-									$(json7).get(5)['leadership'] + '<br>'  + $(json7).get(5)['leadership_percentage'] + '%', 
+									'mP Truth <br>' + $(json5).get(3)['leadership_percentage']+ '%', 
+									'mP Assessment <br>' + $(json5).get(4)['leadership_percentage']+ '%', 
+									'mP Abundance <br>' + $(json5).get(5)['leadership_percentage']+ '%', 
 									'', 
-									$(json7).get(6)['leadership'] + '<br>'  + $(json7).get(6)['leadership_percentage'] + '%',
-									$(json7).get(7)['leadership'] + '<br>'  + $(json7).get(7)['leadership_percentage'] + '%', 
-									$(json7).get(8)['leadership'] + '<br>'  + $(json7).get(8)['leadership_percentage'] + '%'
+									'mP Belief<br>' + $(json5).get(6)['leadership_percentage']+ '%',
+									'mP Unity <br>'+ $(json5).get(7)['leadership_percentage']+ '%', 
+									'mP Valor <br>'+$(json5).get(8)['leadership_percentage']+ '%'
 								],
 								name = ' ',
 								data = [
-								{ y: parseInt($(json7).get(0)['leadership_percentage']), color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Empathy'], 	data: [], color: '#99182C' } }, 
-								{ y: parseInt($(json7).get(1)['leadership_percentage']),  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Excellence'], 	data: [], color: '#99182C'} }, 
-								{ y: parseInt($(json7).get(2)['leadership_percentage']),  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Touch'], 	data: [], color: '#99182C'} }, 
-								{ y: 0,  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Total'], 	data: [parseInt($(json7).get(0)['leadership_percentage'])+parseInt($(json7).get(1)['leadership_percentage'])+parseInt($(json7).get(2)['leadership_percentage'])], color: '#99182C'} },
-								{ y: parseInt($(json7).get(3)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Truth'], data: [], color: '#3D5229' }}, 
-								{ y: parseInt($(json7).get(4)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Assessment'], data: [], color: '#3D5229' }}, 
-								{ y: parseInt($(json7).get(5)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Abundance'], data: [], color: '#3D5229' }}, 
-								{ y: 0, color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Total'], data: [parseInt($(json7).get(3)['leadership_percentage'])+parseInt($(json7).get(4)['leadership_percentage'])+parseInt($(json7).get(5)['leadership_percentage'])], color: '#3D5229' }}, 
-								{ y: parseInt($(json7).get(6)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Belief'], data: [], color: colors[3] }},
-								{ y: parseInt($(json7).get(7)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Unity'], data: [], color: colors[3] }},
-								{ y: parseInt($(json7).get(8)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Valor'], data: [], color: colors[3] }},
-								{ y: 0, color: colors[3], drilldown: { name: 'Detail Score', categories: ['Total'], data: [parseInt($(json7).get(6)['leadership_percentage'])+parseInt($(json7).get(7)['leadership_percentage'])+parseInt($(json7).get(8)['leadership_percentage'])], color: colors[3] }}
+								{ y: parseInt($(json5).get(0)['leadership_percentage']), color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Empathy'], 	data: [], color: '#99182C' } }, 
+								{ y: parseInt($(json5).get(1)['leadership_percentage']),  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Excellence'], 	data: [], color: '#99182C'} }, 
+								{ y: parseInt($(json5).get(2)['leadership_percentage']),  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Touch'], 	data: [], color: '#99182C'} }, 
+								{ y: 0,  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Total'], 	data: [parseInt($(json5).get(0)['leadership_percentage'])+parseInt($(json5).get(1)['leadership_percentage'])+parseInt($(json5).get(2)['leadership_percentage'])], color: '#99182C'} },
+								{ y: parseInt($(json5).get(3)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Truth'], data: [], color: '#3D5229' }}, 
+								{ y: parseInt($(json5).get(4)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Assessment'], data: [], color: '#3D5229' }}, 
+								{ y: parseInt($(json5).get(5)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Abundance'], data: [], color: '#3D5229' }}, 
+								{ y: 0, color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Total'], data: [parseInt($(json5).get(3)['leadership_percentage'])+parseInt($(json5).get(4)['leadership_percentage'])+parseInt($(json5).get(5)['leadership_percentage'])], color: '#3D5229' }}, 
+								{ y: parseInt($(json5).get(6)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Belief'], data: [], color: colors[3] }},
+								{ y: parseInt($(json5).get(7)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Unity'], data: [], color: colors[3] }},
+								{ y: parseInt($(json5).get(8)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Valor'], data: [], color: colors[3] }},
+								{ y: 0, color: colors[3], drilldown: { name: 'Detail Score', categories: ['Total'], data: [parseInt($(json5).get(6)['leadership_percentage'])+parseInt($(json5).get(7)['leadership_percentage'])+parseInt($(json5).get(8)['leadership_percentage'])], color: colors[3] }}
 								];
 							
 								var browserData = [];
@@ -454,24 +433,14 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 							
 							var chart;
 							var colors = Highcharts.getOptions().colors,
-								categories = [
-									$(json5).get(0)['leadership'],
-									$(json5).get(1)['leadership'],
-									$(json5).get(2)['leadership'],
-									$(json5).get(3)['leadership'],
-									$(json5).get(4)['leadership'],
-									$(json5).get(5)['leadership'],
-									$(json5).get(6)['leadership'],
-									$(json5).get(7)['leadership'],
-									$(json5).get(8)['leadership']
-								],
+								categories = ['Excellence', 'Touch', 'Belief', 'Valor', 'Enpathy', 'Assessment', 'Unity','Truth', 'Abundance'],
 								name = ' ',
 								data = [
-									{ y: parseInt($(json5).get(0)['leadership_percentage']), color: '#FFCC66'}, 
+									{ y: parseInt($(json5).get(5)['leadership_percentage']), color: '#FFCC66'}, 
 									{ y: parseInt($(json5).get(1)['leadership_percentage']), color: '#FFCC66'},
 									{ y: parseInt($(json5).get(2)['leadership_percentage']), color: '#FFCC66'},
 									{ y: parseInt($(json5).get(3)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(4)['leadership_percentage']), color: '#FFCC66'},
+									{ y: parseInt($(json5).get(0)['leadership_percentage']), color: '#FFCC66'},
 									{ y: parseInt($(json5).get(5)['leadership_percentage']), color: '#FFCC66'},
 									{ y: parseInt($(json5).get(6)['leadership_percentage']), color: '#FFCC66'},
 									{ y: parseInt($(json5).get(7)['leadership_percentage']), color: '#FFCC66'},
@@ -524,28 +493,18 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 							
 							var chart;
 							var colors = Highcharts.getOptions().colors,
-								categories = [
-									$(json7).get(0)['leadership'],
-									$(json7).get(1)['leadership'],
-									$(json7).get(2)['leadership'],
-									$(json7).get(3)['leadership'],
-									$(json7).get(4)['leadership'],
-									$(json7).get(5)['leadership'],
-									$(json7).get(6)['leadership'],
-									$(json7).get(7)['leadership'],
-									$(json7).get(8)['leadership']
-								],
+								categories = ['mP Touch', 'mP Excellence', 'mP Empathy', 'mP Abundance', 'mP Truth', 'mP Assessment', 'mP Valor','mP Belief', 'mP Unity'],
 								name = ' ',
 								data = [
-									{ y: parseInt($(json7).get(0)['leadership_percentage']), color: '#99182C'}, 
-									{ y: parseInt($(json7).get(1)['leadership_percentage']), color: '#99182C'},
-									{ y: parseInt($(json7).get(2)['leadership_percentage']), color: '#99182C'},
-									{ y: parseInt($(json7).get(3)['leadership_percentage']), color: '#3D5229'},
-									{ y: parseInt($(json7).get(4)['leadership_percentage']), color: '#3D5229'},
-									{ y: parseInt($(json7).get(5)['leadership_percentage']), color: '#3D5229'},
-									{ y: parseInt($(json7).get(6)['leadership_percentage']), color: colors[3]},
-									{ y: parseInt($(json7).get(7)['leadership_percentage']), color: colors[3]},
-									{ y: parseInt($(json7).get(8)['leadership_percentage']), color: colors[3]}
+									{ y: parseInt($(json5).get(2)['leadership_percentage']), color: '#99182C'}, 
+									{ y: parseInt($(json5).get(1)['leadership_percentage']), color: '#99182C'},
+									{ y: parseInt($(json5).get(0)['leadership_percentage']), color: '#99182C'},
+									{ y: parseInt($(json5).get(3)['leadership_percentage']), color: '#3D5229'},
+									{ y: parseInt($(json5).get(4)['leadership_percentage']), color: '#3D5229'},
+									{ y: parseInt($(json5).get(5)['leadership_percentage']), color: '#3D5229'},
+									{ y: parseInt($(json5).get(6)['leadership_percentage']), color: colors[3]},
+									{ y: parseInt($(json5).get(7)['leadership_percentage']), color: colors[3]},
+									{ y: parseInt($(json5).get(8)['leadership_percentage']), color: colors[3]}
 								];
 							
 							function setChart(name, categories, data, color) {
@@ -598,89 +557,21 @@ var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 						view: '',
 						controller: function (){
 							var _string =[];
-							_string.push('<div style="overflow-y:scroll; height: 700px;"><div id="page8-1" style=" position: relative;width: 100%;"><div style="top:5px; position:relative;"><img src="img/page8-1.png" style="width:939px;"/></div>');
-							_string.push('<ul style="list-style: none outside none; padding:0px; margin:0px;">');
-							$(top3).each(function (num1, it1){
-								_string.push('<li class="top3"><span>' + it1.leadership + ' (' + it1.leadership_percentage + '%) </span></li>');
-							});
+							_string.push('<div id="page8-1" style=" overflow: auto;height: 650px;position: relative;width: 100%;"><div style="top:5px; position:relative;"><img src="img/page8-1.png" style="width:939px;"/></div>');
+							_string.push('<div id="page8-2" style="position: absolute; top: 138px;"><ul style="list-style: none outside none;">');
+							_string.push('<li><span>mindPower of Unity (18%)</span></li>');
+							_string.push('<li><span>mindPower of Assessment (18%)</span></li>');
+							_string.push('<li><span>mindPower of Belief (17%)</span></li>');
+							_string.push('<li><span>mindPower of Truth (14%)</span></li>');
+							_string.push('<li><span>mindPower of Empathy (11%)</span></li>');
 							_string.push('</div></ul>');
-							_string.push('<div id="page8-2" style="position: relative;"><div style="top:5px; position:relative;"><img src="img/page8-2.png" style="width:750px;"/></div><ul style="list-style: none outside none; margin:0px; padding:0px;">');
-							
-							$(bottom3).each(function (num1, it1){
-								_string.push('<li class="bottom3"><span>' + it1.leadership + ' (' + it1.leadership_percentage + '%) </span></li>');
-							});
-
-							_string.push('</ul></div><div style="top:5px; position:relative;"><img src="img/page8-3.png" style="width:750px;"/></div></div>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page9: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							var _currentGroup = '';
-							var _newGroup = false;
-							var _firstTime = false;
-							_string.push('<div style="overflow-y:scroll; height: 700px;"><div id="page9-1" style=" position: relative;width: 100%;">');
-							_string.push('<div style="top:5px; position:relative;"><img src="img/page9-1.png" style="width:939px;"/></div>');
-							$(json8).each(function (num1, it1){
-								if (_currentGroup =='' ){
-									_firstTime = true;
-									_currentGroup = it1.leadership;
-								}
-								else if( _currentGroup != it1.leadership){
-									_currentGroup = it1.leadership;
-									_newGroup = true;
-									_firstTime = false;
-								}
-								else{
-									_newGroup = false;
-									_firstTime = false;	
-								}
-								if (_firstTime)
-									_string.push('<ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								else if (_newGroup)
-									_string.push('</ul><ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								_string.push('<li class=""><span>' + it1.question + ' </span></li>');
-							});
-							_string.push('</div></ul>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page10: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							var _currentGroup = '';
-							var _newGroup = false;
-							var _firstTime = false;
-							_string.push('<div style="overflow-y:scroll; height: 700px;"><div id="page10-1" style=" position: relative;width: 100%;">');
-							_string.push('<div style="top:5px; position:relative;"><img src="img/page10-1.png" style="width:939px;"/></div>');
-							$(json9).each(function (num1, it1){
-								if (_currentGroup =='' ){
-									_firstTime = true;
-									_currentGroup = it1.leadership;
-								}
-								else if( _currentGroup != it1.leadership){
-									_currentGroup = it1.leadership;
-									_newGroup = true;
-									_firstTime = false;
-								}
-								else{
-									_newGroup = false;
-									_firstTime = false;	
-								}
-								if (_firstTime)
-									_string.push('<ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="color:red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								else if (_newGroup)
-									_string.push('</ul><ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="color: red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								_string.push('<li class=""><span>' + it1.question + ' </span></li>');
-							});
-							_string.push('</div></ul>');
+							_string.push('<div id="page8-3" style="color:red; position: absolute; top: 490px; left:15px"><ul style="list-style: none outside none;">');
+							_string.push('<li><span>mindPower of Touch (3%)</span></li>');
+							_string.push('<li><span>mindPower of Abundance (6%)</span></li>');
+							_string.push('<li><span>mindPower of Excellence (7%)</span></li>');
+							_string.push('<li><span>mindPower of Valor (7%)</span></li>');
+							_string.push('<li><span>mindPower of Empathy (11%)</span></li>');
+							_string.push('</div></ul></div>');
 							_string = _string.join('');
 							mP.$mid_container.html(_string);
 							mP.$bot_container.html('');

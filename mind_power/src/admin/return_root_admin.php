@@ -1,0 +1,1 @@
+<a href="index.php">Back to Aministration page</a>

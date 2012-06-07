@@ -26,17 +26,28 @@ function validate(form){
 	}
 	
 	if (form.title.value.trim() == '') {
-		alert('Please enter the title!');
+		alert('Please select the title!');
 		form.title.focus();
 		return;
 	}
 
 	if (form.name.value.trim() == '') {
-		alert('Please enter the tester name!');
+		alert('Please enter the tester surname!');
 		form.name.focus();
 		return;
 	}
 
+	if (form.given_names.value.trim() == '') {
+		alert('Please enter the tester given names!');
+		form.given_names.focus();
+		return;
+	}
+
+	if (form.gender[0].checked == false && form.gender[1].checked == false) {
+		alert('Please select the tester gender!');
+		return;
+	}
+	
 	if (form.email.value.trim() == '') {
 		alert('Please enter the email!');
 		form.email.focus();
@@ -88,11 +99,36 @@ function validateQuestions() {
 	
 	return true;
 }
+
+function setGender(form) {
+	var title = form.title.value;
+	if (title != '') {
+		if (title == 'Mr.')
+			form.gender[0].checked = true;
+		else if (title == 'Ms.')
+			form.gender[1].checked = true;
+		else {
+			form.gender[0].checked = false;
+			form.gender[1].checked = false;
+		}
+		
+	}
+	
+}
 </script>
 
 <form action="insert.php" method="post" name="send_questions" id="send_questions">
-Title: <input type="text" name="title"><br>
-Name: <input type="text" name="name"><br>
+Title: 
+<select name="title" onchange="setGender(document.send_questions);">
+	<option value="">(select one)</option>
+	<option value="Mr.">Mr.</option>
+	<option value="Ms.">Ms.</option>
+	<option value="Dr.">Dr.</option>
+	<option value="Prof.">Prof.</option>
+</select><br>
+Surname: <input type="text" name="name" maxlength="120"><br>
+Given names: <input type="text" name="given_names" maxlength="120"><br>
+Gender: <input type="radio" name="gender" value="Male">Male <input type="radio" name="gender" value="Female"> Female<br> 
 E-mail: <input type="text" name="email"><br>
 Company: <select name="company_id">
 <option value="0">(select your company)</option>

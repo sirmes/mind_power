@@ -1,9 +1,30 @@
 <?php
 include("DB.php");
 $DB = DB::Open();
+$print_message_on = false;
 
-$token = crypt("samuel irmes sirmes@gmail.com". rand(1,100), 'mind');
-echo "$token<br>";
+function print_message($message, $print_message_on) {
+	if($print_message_on)
+		echo "$message <br>";
+}
+
+date_default_timezone_set('Australia/Melbourne');
+$date = date('m/d/Y h:i:s a', time());
+$time = time();
+echo "$time<br>";
+
+$temp_token="samuel irmes sirmes@gmail.com$time".rand(0,99999);
+echo "$temp_token<br>";
+
+$token = crypt($temp_token, '_J9..mind');
+echo "final token: $token<br>";
+
+print_message($token, $print_message_on);
+
+//ob_start();
+//header("location: index_ext.php");
+//ob_end_flush(); //now the headers are sent
+
 DIE("STOP");
 
 $test_on = htmlspecialchars($_GET["test_on"]);

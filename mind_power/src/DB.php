@@ -11,14 +11,20 @@
 	       	$database="mind_power";
 	       	$hostname="127.0.0.1";
 	       	$hostport="3306";
-        	$username="a2291259_mindp";
-        	$password="mind123";
+	       	$username="a2291259_mindp";
+	       	$password="mind123";
 	       	
 	       	//This is for 000webhost
 //         	$database="a2291259_mindp";
 //         	$hostname="mysql3.000webhost.com";
 //         	$hostport="3306";
 
+	       	//This is for new HK host
+//         	$database="ceompowe_mindpower";
+// 	       	$hostname="127.0.0.1";
+//         	$username="ceompowe";
+//         	$password="8y5iAf1q7D";
+        	
             self::$DB_Name = $database;
             self::$DB_Conn = mysql_connect($hostname . ":" . $hostport, $username, $password);
             if (!self::$DB_Conn) { die('Critical Stop Error: Database Error<br />' . mysql_error()); }

@@ -1,694 +1,79 @@
-<?php
-include("../DB.php");
-$DB = DB::Open();
-
-$tester_id = $_POST['tester_id'];
-$tester_token = $_GET['token'];
-
-//==================  Get tester id by token ==================
-if ($tester_id == '' && $tester_token != '') {
-	$query="select id from testers where token = '$tester_token'";
-	$testers = $DB->qry($query);
-	
-	$num_testers = $DB->qry_row_num($testers);
-	
-	while ($i < $num_testers) {
-		$tester_id= mysql_result($testers,$i,"id");
-		break;
-	}
-} 
-
-if ($tester_id == '' && $tester_token == '')
-	$tester_id = htmlspecialchars($_GET["tester_id"]);
-
-
-// echo "Tester id: $tester_id <br>";
-
-//================== Average score ===============
-$query="select score from average_score";
-$score = $DB->qry($query);
-
-$rows_score_json = array();
-while($r = mysql_fetch_assoc($score)) {
-	$rows_score_json[] = $r;
-}
-
-//================== Bring all leadership ===============
-$query="select c.name as strategic, s.name as leadership " .
-		"from strategic_management c, leadership s, testers t, testers_answers a, questions_answers q " .
-		"where " .
-		"c.id = q.id_strategic_management " .
-		"and q.id_leadership = s.id " .
-		"and q.id = a.id_question " .
-		"and a.id_tester = t.id " .
-		"and c.active = 'A' " .
-		"and s.active = 'A' " .
-		"and t.id = $tester_id " .
-		"group by c.name, s.name";
-
-$result = $DB->qry($query);
-
-$leadership_json = array();
-while($r = mysql_fetch_assoc($result)) {
-	$leadership_json[] = $r;
-}
-
-//================== Bring all strategic management ===============
-$query="select name from strategic_management where active = 'A'";
-$strategic_management = $DB->qry($query);
-
-$rows_strategic_management_json = array();
-while($r = mysql_fetch_assoc($strategic_management)) {
-	$rows_strategic_management_json[] = $r;
-}
-
-//================== Bring tester data ===============
-$query = "select t.id as tester_id, title, t.name, email, c.name company, date_format(created_date, '%M %D, %Y') created_date".
-			" from testers t, companies c where c.id = t.id_company and t.id = $tester_id";
-$tester = $DB->qry($query);
-
-$tester_json = array();
-while($r = mysql_fetch_assoc($tester)) {
-	$tester_json[] = $r;
-}
-
-//================== Bring tester answers counts not grouped ===============
-$query = "select l.name as leadership, t.leadership_count, t.leadership_percentage ".
-		"from testers_answers_counts t, leadership l ". 
-		"where id_tester = $tester_id ".
-		"	and t.id_leadership = l.id ".
-		"order by 3";
-
-$tester_answers_counts = $DB->qry($query);
-
-$answers_counts_json = array();
-while($r = mysql_fetch_assoc($tester_answers_counts)) {
-	$answers_counts_json[] = $r;
-}
-
-//================== Bring tester answers counts grouped by leadership ===============
-$query = "select s.name strategic_management, l.name as leadership, t.leadership_count, t.leadership_percentage ".
-		"from testers_answers_counts t, leadership l, strategic_management s ".
-		" where id_tester = $tester_id ".
-		"	and t.id_leadership = l.id ".
-		"	and s.id = t.id_strategic_management ".
-		"order by s.id, t.leadership_percentage";
-
-$tester_answers_counts_grouped_by_leadership = $DB->qry($query);
-
-$answers_counts_grouped_by_ledership_json = array();
-while($r = mysql_fetch_assoc($tester_answers_counts_grouped_by_leadership)) {
-	$answers_counts_grouped_by_ledership_json[] = $r;
-}
-
-//================== Being all questions(statements) that were submitted ===============
-$query = "select l.name leadership, q.question ".
-			"from testers_answers t, questions_answers q, leadership l ".
-			"where t.id_tester = $tester_id ".
-			"	and t.id_question = q.id ".
-			"	and l.id = q.id_leadership ".
-			"group by l.name, q.question ".
-			"order by 1, 2;";
-
-$tester_answers_submitted = $DB->qry($query);
-
-$answers_answers_submitted_json = array();
-while($r = mysql_fetch_assoc($tester_answers_submitted)) {
-	$answers_answers_submitted_json[] = $r;
-}
-
-//================== Bring all questions(statements) that were NOT submitted ===============
-$query = "select l.name as leadership, q.question, q.id ".
-"from questions_answers q, leadership l, ".
-" ( ".
-"select l.id ".
-"from testers_answers_counts t, leadership l ".
-"where t.id_tester = $tester_id ".
-"	and l.id = t.id_leadership ".
-"order by leadership_percentage asc ".
-"limit 0,4) as bottom_leadership ".
-"where q.id_leadership = l.id ".
-"and q.id not in ( ".
-"select q.id ".
-"from testers_answers t, questions_answers q ".
-"where t.id_tester = $tester_id ".
-"	and t.id_question = q.id) ".
-"	and l.id in (bottom_leadership.id) ".
-"group by name, question ".
-"order by name, question";
-
-
-$tester_answers_not_submitted = $DB->qry($query);
-
-$answers_answers_not_submitted_json = array();
-while($r = mysql_fetch_assoc($tester_answers_not_submitted)) {
-	$answers_answers_not_submitted_json[] = $r;
-}
-
-//================== Bring all answers picked twice ===============
-$query = "select leadership_id, leadership, question, leadership_percentage ".
-"from ". 
-" ( ".
-" select q.id_leadership as leadership_id, question, count(question) as counter ".
-" from questions_answers q, testers_answers t ".
-" where t.id_tester = $tester_id ".
-" 	and t.id_question = q.id ".
-"	group by question ".
-"	order by 3 desc, 1, 2 ".
-") as results, ".
-"(select l.id, l.name as leadership, t.leadership_percentage ".
-"from testers_answers_counts t, leadership l ".
-"where t.id_tester = $tester_id ".
-"and l.id = t.id_leadership ".
-"order by leadership_percentage desc ".
-"limit 0,4) as top3 ".
-"where counter >= 2 ".
-"	and leadership_id in (top3.id) ".
-"order by 4 desc";
-
-$tester_answers_picked_twiced = $DB->qry($query);
-
-$answers_answers_picked_twice_json = array();
-while($r = mysql_fetch_assoc($tester_answers_picked_twiced)) {
-	$answers_answers_picked_twice_json[] = $r;
-}
-
-//================== Bring top 3/4 ===============
-$query = "select l.name as leadership, t.leadership_percentage ".
-		"from testers_answers_counts t, leadership l ".
-		"where t.id_tester = $tester_id ".
-		"	and l.id = t.id_leadership ".
-		"order by leadership_percentage desc ".
-		"limit 0,4";
-
-$top_3 = $DB->qry($query);
-
-$top_3_json = array();
-while($r = mysql_fetch_assoc($top_3)) {
-	$top_3_json[] = $r;
-}
-
-//================== Bring bottom 3/4 ===============
-$query = "select l.name as leadership, t.leadership_percentage ".
-		"from testers_answers_counts t, leadership l ".
-		"where t.id_tester = $tester_id ".
-		"	and l.id = t.id_leadership ".
-		"order by leadership_percentage asc ".
-		"limit 0,4";
-
-$bottom_3 = $DB->qry($query);
-
-$bottom_3_json = array();
-while($r = mysql_fetch_assoc($bottom_3)) {
-	$bottom_3_json[] = $r;
-}
-
-// print "<hr>";
-// print "average score: " . json_encode($rows_score_json) . "<br>";
-// print "<hr>";
-// print "tester: " . json_encode($tester_json) . "<br>";
-// print "<hr>";
-// print "Strategic management: " . json_encode($rows_strategic_management_json) . "<br>";
-// print "<hr>";
-// print "Leadership: " . json_encode($leadership_json);
-// print "<hr>";
-// print "testers answers counts: " . json_encode($answers_counts_json);
-// print "<hr>";
-// print "testers answers counts grouped by leadership: " . json_encode($answers_counts_grouped_by_ledership_json);
-// print "<hr>";
-// print "All answers submitted: " . json_encode($answers_answers_submitted_json);
-// print "<hr>";
-// print "All answers NOT submitted: " . json_encode($answers_answers_not_submitted_json);
-// print "<hr>";
-// print "All answers picked twice: " . json_encode($answers_answers_picked_twice_json);
-// print "<hr>";
-// print "Top 3: " . json_encode($top_3_json);
-// print "<hr>";
-// print "Bottom 3: " . json_encode($bottom_3_json);
-
-
-?>
-<script type="text/javascript">
-<!--
-var json1 = <?php echo json_encode($rows_score_json); ?>;
-var json2 = <?php echo json_encode($tester_json); ?>;
-var json3 = <?php echo json_encode($rows_strategic_management_json); ?>;
-var json4 = <?php echo json_encode($leadership_json); ?>;
-var json5 = <?php echo json_encode($answers_counts_json); ?>;
-var json6 = <?php echo json_encode($answers_counts_json); ?>;
-var json7 = <?php echo json_encode($answers_counts_grouped_by_ledership_json); ?>;
-var temp123 = <?php echo json_encode($answers_answers_submitted_json); ?>;
-var json8 = <?php echo json_encode($answers_answers_picked_twice_json); ?>;
-var json9 = <?php echo json_encode($answers_answers_not_submitted_json); ?>;
-var top3 = <?php echo json_encode($top_3_json); ?>;
-var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
-
-//-->
-</script>
-
-
-
+<?php include 'backend_code.php' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	</head>
 		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/mP.js"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
 		<script src="http://code.highcharts.com/modules/exporting.js"></script>
 		<style>
-			#main-container{margin: 30px auto 30px;padding-left: 5px;text-align: left;width: 960px;height:1200px; position:relative}
+			#main-container{margin: 30px auto 30px;padding-left: 5px;text-align: left;width: 960px; position:relative}
 			#main-screen{ background: none repeat scroll 0 0 black	;    height: 376px;    margin-left: 35px;    margin-top: 136px;    width: 321px;}
-			#left-container{}
-			#top-container{background: url(img/mp-logo.png); background-size: 300px 50px; background-repeat:no-repeat;height: 55px; width: 300px; position:relative;}
-			#mid-container{height: 700px; position: relative; width: 100%;}
-			#bot-container{background-attachment: scroll;    background-clip: border-box;    background-color:transparent;    background-image: url("img/mp-copyright.png");    background-origin:padding-box;    background-position: 0 0;    background-repeat: no-repeat;   background-size: 347px 16px;    height: 18px;    position: relative; width: 100%;}
-			#page8-2 ul li{padding:18px;}
+
+			#top-container{height: 55px; width: 300px; position:relative;}
+			#top-container img{height: 50px;    width: 300px;}
+			#mid-container{position: relative;}
+			#bot-container{margin-top: 65px; height: 18px;    position: relative; }
+			
+			#page8-2 ul li{}
+			
 			#nav-control a {padding-right:5px}
-			#pie-logo{background: url("img/pielogo-1.png") repeat scroll -26px -19px transparent;}
+			#pie-logo{}
 			#chart{width:800px; height:600px;}
-			#mp-strategic{background: url(img/mp-strategic.png) no-repeat scroll 0 0 transparent; height: 133px;  left: -50px;  position: absolute;  top: 2px;  width: 265px;}
-			#mp-business{background: url(img/mp-business.png) no-repeat scroll 0 0 transparent;  bottom: 10px; height: 133px; position: absolute; right: 360px; width: 265px;}
-			#mp-people{ background: url("img/mp-people.png") no-repeat scroll 0 0 transparent; height: 133px;    position: absolute;    right: 50px;    top: 33px;    width: 265px;}
-			.top3{ 	background: url("img/page8-box-top.png") no-repeat scroll 0 0 transparent;    height: 45px;    padding-left: 23px;    padding-top: 23px;}
-			.bottom3{ background: url("img/page8-box-bot.png") no-repeat scroll 0 0 transparent;    height: 40px;    padding-left: 5px;    position: relative;}
+			
+			#mp-strategic{ left: -50px;    position: relative;    top: -540px;}
+			#mp-strategic img{position: absolute;}
+			#mp-business{ left: 375px;    position: relative;    top: -30px;}
+			#mp-business img{position: absolute;}
+			#mp-people{ position: relative;    right: -709px;    top: -595px;}
+			#mp-people img{position: absolute;}
+
+			.top3{ border: 2px solid orange;   border-radius: 25px 25px 25px 25px;   margin-bottom: 5px;    padding-left: 23px;    padding-top: 0;    width: 350px;}
+			.bottom3{ border: 2px solid red;  border-radius: 25px 25px 25px 25px;   margin-bottom: 5px;    padding-left: 23px;    padding-top: 0;    width: 350px;}
+			
+			#p1{height: 820px;   width: 930px;}
+			#mid-container1{}
+			#page1-1{height: 200px;    left: 95px;    padding-top: 100px;    position: relative;}
+			#page1-2{font-size: 50px; padding-bottom: 50px;    padding-top: 45px;    position: relative;    text-align: center;}
+			#p1 #bot-container{margin-top: 65px; background-image: url("img/mp-copyright.png");    background-repeat: no-repeat;   height: 18px;    position: relative; }
+			
+			#p2{height: 820px;   width: 930px;}
+			#p3{height: 820px;   width: 930px;}
+			#p4{height: 820px;   width: 930px;}
+			#p5{height: 820px;   width: 930px;}
+			#chart5{height:550px;}
+			#p6{height: 820px;   width: 930px;}
+			#chart6{height:550px;}
+			#p7{height: 820px;   width: 930px;}
+			#chart7{height:550px;}
+			#p8{height: 820px;   width: 930px;}
+			#p9{height: 820px;   width: 930px;}
+			#p10{height: 820px;   width: 930px;}
 		</style>
-	<body>
-			<div id="main-container">
-				<div id="top-container">
-				</div>
-				<div id="mid-container">
-				</div>
-				<div id="bot-container">
-				</div>
-			</div> 
-			<div id="nav-control" style="top: 1px; position: fixed;">
-				<a href="javascript:mP.page1.controller();" > Page 1 </a>
-				<a href="javascript:mP.page2.controller();" > Page 2 </a>
-				<a href="javascript:mP.page3.controller();" > Page 3 </a>
-				<a href="javascript:mP.page4.controller();" > Page 4 </a>
-				<a href="javascript:mP.page5.controller();" > Page 5 </a>
-				<a href="javascript:mP.page6.controller();" > Page 6 </a>
-				<a href="javascript:mP.page7.controller();" > Page 7 </a>
-				<a href="javascript:mP.page8.controller();" > Page 8 </a>
-				<a href="javascript:mP.page9.controller();" > Page 9 </a>
-				<a href="javascript:mP.page10.controller();" > Page 10 </a>
-			</div>
-		</body>
-		<script type="text/javascript" >
-				var _jsonOBJ = {
-					"categories": [{"name":"Strategic People Management"},{"name":"Strategic Inovation Management"},{"name":"Strategic Execution Management"}],
-					"sub-categories": [{"category":"Strategic Execution Management","sub_category":"mP Truth","qtd":"1"},{"category":"Strategic Inovation Management","sub_category":"mP Abundance","qtd":"1"},{"category":"Strategic People Management","sub_category":"mP Empathy","qtd":"2"},{"category":"Strategic People Management","sub_category":"mP Excellence","qtd":"1"}]
-				};
-				
-				var mP = {
-					$mid_container: jQuery('#mid-container'),
-					$top_container: jQuery('#top-container'),
-					$bot_container: jQuery('#bot-container'),
-					page1: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							_string.push('<div id="page1-1" style="left:95px; top:100px; position:relative;"><img src="img/page1-1.png" /></div>');
-							_string.push('<div id="page1-2" style="position:relative; position: relative; text-align: center; top: 100px; font-size: 50px;" >'+
-								'<span>' + $(json2).first().prop('title') + '.' + $(json2).first().prop('name') + '</span><br /><span>'+$(json2).first().prop('created_date')+'</span></div>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							_string =[];
-							_string.push('<div id="page1-3" style="float: right; margin-top: -139px;"><img src="img/page1-3.png" /> </div>');
-							_string = _string.join();
-							mP.$bot_container.html(_string);
-						}
-					},
-					page2: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							_string.push('<div id="page2-1" style="top:60px; position:relative;"><img src="img/page2-1.png" style="width:939px;"/></div>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page3: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							_string.push('<div id="page3-1" style="top:40px; position:relative;"><img src="img/page3-1.png" style="width:939px;"/></div>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page4: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							_string.push('<div id="page4-1" style="top:40px; position:relative;"><img src="img/page4-1.png" style="width:939px;"/></div>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page5: {
-						view: '',
-						controller: function (){
-							mP.$mid_container.html('<div id="addText" style="position:absolute; left:0px; top:0px; z-index:1;"></div><div id="chart"></div><div id="mp-people"></div><div id="mp-strategic"></div><div id="mp-business"></div>');
-							mP.$bot_container.html('');
-							
-							var chart;
-							var colors = Highcharts.getOptions().colors,
-								categories = [
-									$(json7).get(0)['leadership'] + '<br>'  + $(json7).get(0)['leadership_percentage'] + '%', 
-									$(json7).get(1)['leadership'] + '<br>'  + $(json7).get(1)['leadership_percentage'] + '%', 
-									$(json7).get(2)['leadership'] + '<br>'  + $(json7).get(2)['leadership_percentage'] + '%',
-									'', 
-									$(json7).get(3)['leadership'] + '<br>'  + $(json7).get(3)['leadership_percentage'] + '%', 
-									$(json7).get(4)['leadership'] + '<br>'  + $(json7).get(4)['leadership_percentage'] + '%', 
-									$(json7).get(5)['leadership'] + '<br>'  + $(json7).get(5)['leadership_percentage'] + '%', 
-									'', 
-									$(json7).get(6)['leadership'] + '<br>'  + $(json7).get(6)['leadership_percentage'] + '%',
-									$(json7).get(7)['leadership'] + '<br>'  + $(json7).get(7)['leadership_percentage'] + '%', 
-									$(json7).get(8)['leadership'] + '<br>'  + $(json7).get(8)['leadership_percentage'] + '%'
-								],
-								name = ' ',
-								data = [
-								{ y: parseInt($(json7).get(0)['leadership_percentage']), color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Empathy'], 	data: [], color: '#99182C' } }, 
-								{ y: parseInt($(json7).get(1)['leadership_percentage']),  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Excellence'], 	data: [], color: '#99182C'} }, 
-								{ y: parseInt($(json7).get(2)['leadership_percentage']),  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Touch'], 	data: [], color: '#99182C'} }, 
-								{ y: 0,  color: '#99182C', drilldown: { name: 'Detail Score', categories: ['Total'], 	data: [parseInt($(json7).get(0)['leadership_percentage'])+parseInt($(json7).get(1)['leadership_percentage'])+parseInt($(json7).get(2)['leadership_percentage'])], color: '#99182C'} },
-								{ y: parseInt($(json7).get(3)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Truth'], data: [], color: '#3D5229' }}, 
-								{ y: parseInt($(json7).get(4)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Assessment'], data: [], color: '#3D5229' }}, 
-								{ y: parseInt($(json7).get(5)['leadership_percentage']), color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Abundance'], data: [], color: '#3D5229' }}, 
-								{ y: 0, color: '#3D5229', drilldown: { name: 'Detail Score', categories: ['Total'], data: [parseInt($(json7).get(3)['leadership_percentage'])+parseInt($(json7).get(4)['leadership_percentage'])+parseInt($(json7).get(5)['leadership_percentage'])], color: '#3D5229' }}, 
-								{ y: parseInt($(json7).get(6)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Belief'], data: [], color: colors[3] }},
-								{ y: parseInt($(json7).get(7)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Unity'], data: [], color: colors[3] }},
-								{ y: parseInt($(json7).get(8)['leadership_percentage']), color: colors[3], drilldown: { name: 'Detail Score', categories: ['Valor'], data: [], color: colors[3] }},
-								{ y: 0, color: colors[3], drilldown: { name: 'Detail Score', categories: ['Total'], data: [parseInt($(json7).get(6)['leadership_percentage'])+parseInt($(json7).get(7)['leadership_percentage'])+parseInt($(json7).get(8)['leadership_percentage'])], color: colors[3] }}
-								];
-							
-								var browserData = [];
-								var versionsData = [];
-								for (var i = 0; i < data.length; i++) {
-									// add browser data
-									browserData.push({ name: categories[i], y: data[i].y, color: data[i].color });
-							
-									// add version data
-									for (var j = 0; j < data[i].drilldown.data.length; j++) {
-										var brightness = 0.2 - (j / data[i].drilldown.data.length) / 5 ;
-										versionsData.push(
-											{ 
-												name: data[i].drilldown.categories[j], y: data[i].drilldown.data[j], 	color: Highcharts.Color(data[i].color).brighten(brightness).get() 
-											}
-										);
-									}
-								}
-							
-							chart = new Highcharts.Chart({
-								chart: { renderTo: 'chart', type: 'pie' },
-								title: { text: '' },
-								yAxis: { title: { text: 'Total percent market share' }},
-								plotOptions: { pie: { shadow: false } },
-								tooltip: {
-									enabled:false
-								},
-								series: [{ name: 'Browsers', data: browserData, size: '60%',
-									dataLabels: { 
-										enabled: true,
-										formatter: function() { return this.y > 5 ? this.point.name : null;},
-										color: 'white',
-										font:'bold 21px Arial',
-										distance: -35
-									}
-								}, 
-								{name: 'Versions', data: versionsData, innerSize: '60%',
-								dataLabels: {
-									formatter: function() {
-										// display only if larger than 1
-										return this.y > 1 ? '<b>'+ this.point.name +'</b> '+ this.y +'%'  : null;
-									}
-								}
-								
-								}]
-							}, function(chart){
-									 var textX = chart.plotLeft + (chart.plotWidth  * 0.5);
-								        var textY = chart.plotTop  + (chart.plotHeight * 0.5);
-
-								        var span = '<div id="pieChartInfoText" style="position:absolute; text-align:center;">';
-								        span += '<div id="pie-logo" style="height: 139px;    margin-left: 10px;    margin-top: 15px;    width: 148px;"></div><br>';
-								        span += '</div>';
-
-								        $("#addText").append(span);
-								        span = $('#pieChartInfoText');
-								        span.css('left', textX + (span.width() * -0.5));
-								        span.css('top', textY + (span.height() * -0.5));
-								});
-						
-						}
-					},
-					page6: {
-						view: '',
-						controller: function (){
-							mP.$mid_container.html('');
-							mP.$bot_container.html('');
-							
-							var chart;
-							var colors = Highcharts.getOptions().colors,
-								categories = [
-									$(json5).get(0)['leadership'],
-									$(json5).get(1)['leadership'],
-									$(json5).get(2)['leadership'],
-									$(json5).get(3)['leadership'],
-									$(json5).get(4)['leadership'],
-									$(json5).get(5)['leadership'],
-									$(json5).get(6)['leadership'],
-									$(json5).get(7)['leadership'],
-									$(json5).get(8)['leadership']
-								],
-								name = ' ',
-								data = [
-									{ y: parseInt($(json5).get(0)['leadership_percentage']), color: '#FFCC66'}, 
-									{ y: parseInt($(json5).get(1)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(2)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(3)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(4)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(5)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(6)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(7)['leadership_percentage']), color: '#FFCC66'},
-									{ y: parseInt($(json5).get(8)['leadership_percentage']), color: '#FFCC66'}
-								];
-							
-							function setChart(name, categories, data, color) {
-								chart.xAxis[0].setCategories(categories);
-								chart.series[0].remove();
-								chart.addSeries({ name: name, data: data, color: color || 'white' });
-							}
-							
-							chart = new Highcharts.Chart({
-								chart: { renderTo: 'mid-container', type: 'column' },
-								title: { text: 'Your mindPower LeadershipTM Score Distribution' },
-								xAxis: { title: {text: ' ',}, categories: categories },
-								yAxis: { title: { text: ' ' }},
-								plotOptions: {
-									column: {
-										cursor: 'pointer',
-										point: {
-											events: {
-												click: function() {
-													var drilldown = this.drilldown;
-													if (drilldown) { // drill down
-														setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
-													} else { // restore
-														setChart(name, categories, data);
-													}
-												}
-											}
-										},
-										dataLabels: { 
-											enabled: true, color: colors[0], style: { fontWeight: 'bold' },
-											formatter: function() { return this.y +'%'; }
-										}
-									}
-								},
-								series: [{name: name, data: data, color: 'white'}, { legend:{enabled: false}, type: 'spline', name: '11% ', coor: '#DC143C', data: [11, 11, 11, 11, 11, 11, 11, 11, 11],	marker:{enabled:false} }],
-								exporting: { enabled: false}
-							});
-						
-						}
-					},
-					page7: {
-						view: '',
-						controller: function (){
-														mP.$mid_container.html('');
-							mP.$bot_container.html('');
-							
-							var chart;
-							var colors = Highcharts.getOptions().colors,
-								categories = [
-									$(json7).get(0)['leadership'],
-									$(json7).get(1)['leadership'],
-									$(json7).get(2)['leadership'],
-									$(json7).get(3)['leadership'],
-									$(json7).get(4)['leadership'],
-									$(json7).get(5)['leadership'],
-									$(json7).get(6)['leadership'],
-									$(json7).get(7)['leadership'],
-									$(json7).get(8)['leadership']
-								],
-								name = ' ',
-								data = [
-									{ y: parseInt($(json7).get(0)['leadership_percentage']), color: '#99182C'}, 
-									{ y: parseInt($(json7).get(1)['leadership_percentage']), color: '#99182C'},
-									{ y: parseInt($(json7).get(2)['leadership_percentage']), color: '#99182C'},
-									{ y: parseInt($(json7).get(3)['leadership_percentage']), color: '#3D5229'},
-									{ y: parseInt($(json7).get(4)['leadership_percentage']), color: '#3D5229'},
-									{ y: parseInt($(json7).get(5)['leadership_percentage']), color: '#3D5229'},
-									{ y: parseInt($(json7).get(6)['leadership_percentage']), color: colors[3]},
-									{ y: parseInt($(json7).get(7)['leadership_percentage']), color: colors[3]},
-									{ y: parseInt($(json7).get(8)['leadership_percentage']), color: colors[3]}
-								];
-							
-							function setChart(name, categories, data, color) {
-								chart.xAxis[0].setCategories(categories);
-								chart.series[0].remove();
-								chart.addSeries({ name: name, data: data, color: color || 'white' });
-							}
-							
-							chart = new Highcharts.Chart({
-								chart: { renderTo: 'mid-container', type: 'column' },
-								title: { text: 'Your mindPower LeadershipTM Score Distribution' },
-								xAxis: { title: {text: ' ',}, categories: categories },
-								yAxis: { title: { text: ' ' }},
-								plotOptions: {
-									events: {
-								         hide: function(a) {
-								            this.yAxis.axisTitle.hide();
-								         },
-								        show: function() {
-								            this.yAxis.axisTitle.show();
-								          }
-							      	},
-									column: {
-										cursor: 'pointer',
-										point: {
-											events: {
-												click: function() {
-													var drilldown = this.drilldown;
-													if (drilldown) { // drill down
-														setChart(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
-													} else { // restore
-														setChart(name, categories, data);
-													}
-												}
-											}
-										},
-										dataLabels: { 
-											enabled: true, color: colors[0], style: { fontWeight: 'bold' },
-											formatter: function() { return this.y +'%'; }
-										}
-									}
-								},
-								series: [{name: name, data: data, color: 'white'},{ type: 'spline', name: '11% ', coor: '#DC143C', data: [11, 11, 11, 11, 11, 11, 11, 11, 11], marker:{enabled:false} }],
-								exporting: { enabled: false}
-							});
-						
-						}
-					},
-					page8: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							_string.push('<div style="overflow-y:scroll; height: 700px;"><div id="page8-1" style=" position: relative;width: 100%;"><div style="top:5px; position:relative;"><img src="img/page8-1.png" style="width:939px;"/></div>');
-							_string.push('<ul style="list-style: none outside none; padding:0px; margin:0px;">');
-							$(top3).each(function (num1, it1){
-								_string.push('<li class="top3"><span>' + it1.leadership + ' (' + it1.leadership_percentage + '%) </span></li>');
-							});
-							_string.push('</div></ul>');
-							_string.push('<div id="page8-2" style="position: relative;"><div style="top:5px; position:relative;"><img src="img/page8-2.png" style="width:750px;"/></div><ul style="list-style: none outside none; margin:0px; padding:0px;">');
-							
-							$(bottom3).each(function (num1, it1){
-								_string.push('<li class="bottom3"><span>' + it1.leadership + ' (' + it1.leadership_percentage + '%) </span></li>');
-							});
-
-							_string.push('</ul></div><div style="top:5px; position:relative;"><img src="img/page8-3.png" style="width:750px;"/></div></div>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page9: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							var _currentGroup = '';
-							var _newGroup = false;
-							var _firstTime = false;
-							_string.push('<div style="overflow-y:scroll; height: 700px;"><div id="page9-1" style=" position: relative;width: 100%;">');
-							_string.push('<div style="top:5px; position:relative;"><img src="img/page9-1.png" style="width:939px;"/></div>');
-							$(json8).each(function (num1, it1){
-								if (_currentGroup =='' ){
-									_firstTime = true;
-									_currentGroup = it1.leadership;
-								}
-								else if( _currentGroup != it1.leadership){
-									_currentGroup = it1.leadership;
-									_newGroup = true;
-									_firstTime = false;
-								}
-								else{
-									_newGroup = false;
-									_firstTime = false;	
-								}
-								if (_firstTime)
-									_string.push('<ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								else if (_newGroup)
-									_string.push('</ul><ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								_string.push('<li class=""><span>' + it1.question + ' </span></li>');
-							});
-							_string.push('</div></ul>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					},
-					page10: {
-						view: '',
-						controller: function (){
-							var _string =[];
-							var _currentGroup = '';
-							var _newGroup = false;
-							var _firstTime = false;
-							_string.push('<div style="overflow-y:scroll; height: 700px;"><div id="page10-1" style=" position: relative;width: 100%;">');
-							_string.push('<div style="top:5px; position:relative;"><img src="img/page10-1.png" style="width:939px;"/></div>');
-							$(json9).each(function (num1, it1){
-								if (_currentGroup =='' ){
-									_firstTime = true;
-									_currentGroup = it1.leadership;
-								}
-								else if( _currentGroup != it1.leadership){
-									_currentGroup = it1.leadership;
-									_newGroup = true;
-									_firstTime = false;
-								}
-								else{
-									_newGroup = false;
-									_firstTime = false;	
-								}
-								if (_firstTime)
-									_string.push('<ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="color:red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								else if (_newGroup)
-									_string.push('</ul><ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><span style="color: red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
-								_string.push('<li class=""><span>' + it1.question + ' </span></li>');
-							});
-							_string.push('</div></ul>');
-							_string = _string.join('');
-							mP.$mid_container.html(_string);
-							mP.$bot_container.html('');
-						}
-					}
-				};
-				$(document).ready(function() {
-  					mP.page1.controller();
-				});
+		<script>
+			var json1 = <?php echo json_encode($rows_score_json); ?>;
+			var json2 = <?php echo json_encode($tester_json); ?>;
+			var json3 = <?php echo json_encode($rows_strategic_management_json); ?>;
+			var json4 = <?php echo json_encode($leadership_json); ?>;
+			var json5 = <?php echo json_encode($answers_counts_json); ?>;
+			var json6 = <?php echo json_encode($answers_counts_json); ?>;
+			var json7 = <?php echo json_encode($answers_counts_grouped_by_ledership_json); ?>;
+			var json8 = <?php echo json_encode($answers_answers_picked_twice_json); ?>;
+			var json9 = <?php echo json_encode($answers_answers_not_submitted_json); ?>;
+			var temp123 = <?php echo json_encode($answers_answers_submitted_json); ?>;
+			var top3 = <?php echo json_encode($top_3_json); ?>;
+			var bottom3 = <?php echo json_encode($bottom_3_json); ?>;
 		</script>
+	<body>
+		<div id="main-container">
+			<div id="mid-container"></div>
+		</div> 
+		<div id="nav-control" style="top: 1px; position: fixed;">
+			<a href="#" id="nav-control-all" data-current="all"> View All </a>
+			<!-- <a href="#" id="nav-control-next" data-current="1" data-prev="0" data-next="2"> Next Page </a>
+			<a href="#" id="nav-control-prev" data-current="2" data-prev="1" data-next="3" style="display:none;"> Previous Page </a> -->
+		</div>
+	</body>
 </html>

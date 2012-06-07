@@ -1,5 +1,5 @@
 <?
-$username="mind_power";
-$password="mind_power";
-$database="mind_power";
+$username="ceompowe";
+$password="8y5iAf1q7D";
+$database="ceompowe_mindpower";
 ?> 

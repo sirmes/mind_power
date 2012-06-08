@@ -10,7 +10,8 @@ $num_companies = $DB->qry_row_num($companies);
 $post_company_id = $_POST['company_id'];
 
 if ($post_company_id != '') {
-	$query="SELECT NAME, email, token FROM testers where id_company = $post_company_id ORDER BY 1, 2 ASC";
+	
+	$query="SELECT NAME, email, token, passcode FROM testers t, testers_add_more a where t.id = a.id_tester and id_company = $post_company_id ORDER BY 1, 2 ASC";;
 	$testers = $DB->qry($query);
 	
 	$num_testers = $DB->qry_row_num($testers);
@@ -72,9 +73,17 @@ echo "<b><center>Testers by company</center></b><br><br>";
 		</font>
 		</td>
 		<td><font face="Arial, Helvetica, sans-serif">
-		Link to the report
+		Internal report
 		</font>
 		</td>		
+		<td><font face="Arial, Helvetica, sans-serif">
+		Tester report<br>(enter passcode)
+		</font>
+		</td>
+		<td><font face="Arial, Helvetica, sans-serif">
+		Passcode
+		</font>
+		</td>			
 </tr>
 <?
 $i=0;
@@ -82,6 +91,7 @@ while ($i < $num_testers) {
 	$tester_name= mysql_result($testers,$i,"name");
 	$tester_email = mysql_result($testers,$i,"email");
 	$tester_token = mysql_result($testers,$i,"token");
+	$tester_passcode = mysql_result($testers,$i,"passcode");
 	?>
 	<tr> 
 		<td><font face="Arial, Helvetica, sans-serif"> 
@@ -95,7 +105,15 @@ while ($i < $num_testers) {
 			<a href="show_tester_report.php?token=<? echo "$tester_token"; ?>">View report</a>
 		</font>
 		</td>
-	</tr>
+		<td><font face="Arial, Helvetica, sans-serif">
+			<a href="../report_check.php?token=<? echo "$tester_token"; ?>">View report</a>
+		</font>
+		</td>
+		<td><font face="Arial, Helvetica, sans-serif">
+			<? echo "$tester_passcode"; ?>
+		</font>
+		</td>
+		</tr>
 	<?
 	++$i;
 }

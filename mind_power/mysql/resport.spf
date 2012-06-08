@@ -186,6 +186,22 @@ from testers t, companies c where c.id = t.id_company and t.id = 56;</string>
 	<array/>
 	<key>queryHistory</key>
 	<array>
+		<string>select t.id from testers t, testers_add_more a
+where t.id = a.id_tester
+and t.token = 'misG9US3WM2b2'
+and a.passcode = '12345690'</string>
+		<string>select id from testers t, testers_add_more a
+where t.id = a.id_tester
+and t.token = 'misG9US3WM2b2'
+and a.passcode = '12345690'</string>
+		<string>--1) Bring tester answers counts not grouped
+select l.name as leadership, t.lead</string>
+		<string>--1) Bring tester answers counts not grouped
+select l.name as leadership, t.leadership_count, t.leadership_percentage
+from testers_answers_counts t, leadership l 
+where id_tester = 56
+and t.id_leadership = l.id
+order by 3</string>
 		<string>select s.name as strategic_management, l.name as leadership, q.`answer_group` ,q.question as statement
 from strategic_management s, leadership l, questions_answers q
 where
@@ -334,54 +350,6 @@ where t.id_tester = 56
 and l.id = t.id_leadership
 order by leadership_percentage desc
 limit 0,4</string>
-		<string>elect l.id, l.name as leadership
-from testers_answers_counts t, leadership l
-where t.id_tester = 56
-and l.id = t.id_leadership
-order by leadership_percentage desc
-limit 0,4</string>
-		<string>select * from 
-(
-select q.id as leadership_id, question, count(question) as counter
-from questions_answers q, testers_answers t
-where t.id_tester = 56
-and t.id_question = q.id
-group by question
-order by 3 desc, 1, 2
-) as results,
-(select l.id 
-from testers_answers_counts t, leadership l
-where t.id_tester = 56
-and l.id = t.id_leadership
-order by leadership_percentage desc
-limit 0,4) as top3
-where counter &gt;= 2
-and leadership_id in (top3.id)</string>
-		<string>select s.id as leadership_id, s.name, question, count(question) as counter
-from questions_answers q, testers_answers t, leadership s
-where t.id_tester = 56
-and t.id_question = q.id
-and s.id = q.id_leadership
-group by s.name
-order by 3 desc, 1, 2</string>
-		<string>select * from 
-(
-select s.id as leadership_id, s.name, question, count(question) as counter
-from questions_answers q, testers_answers t, leadership s
-where t.id_tester = 56
-and t.id_question = q.id
-and s.id = q.id_leadership
-group by s.name
-order by 3 desc, 1, 2
-) as results,
-(select l.id 
-from testers_answers_counts t, leadership l
-where t.id_tester = 56
-and l.id = t.id_leadership
-order by leadership_percentage desc
-limit 0,4) as top3
-where counter &gt;= 2
-and leadership_id in (top3.id)</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

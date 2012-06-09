@@ -14,9 +14,19 @@ $name = htmlspecialchars($_POST["name"]);
 $given_names = htmlspecialchars($_POST["given_names"]);
 $gender = htmlspecialchars($_POST["gender"]);
 $email = htmlspecialchars($_POST["email"]);
-$id_company = $_POST["company_id"];
+$id_company = 0;
+$company_name = $_POST["company_name"];
 $answer_ids = array();
 $total_questions_to_calculate_percentage = 72;
+
+$mobile = htmlspecialchars($_POST["mobile"]);
+$job_title = htmlspecialchars($_POST["job_title"]);
+$company_type = htmlspecialchars($_POST["company_type"]);
+$country = htmlspecialchars($_POST["country"]);
+$industry = htmlspecialchars($_POST["industry"]);
+$challenges = htmlspecialchars($_POST["challenges"]);
+$goal = htmlspecialchars($_POST["goal"]);
+$passcode = htmlspecialchars($_POST["passcode"]);
 
 $leadership = array(
 		"1" => array("id_strategic_management" => 3, "id_leadership" => 1, "leadership_count" => 0, "leadership_percentage" => 0),
@@ -51,9 +61,10 @@ while ($row = mysql_fetch_assoc($result)) {
 // print_message("Printing leadership values with percentages = >", $print_message_on); print_r($leadership);
 
 print_message("<hr>", $print_message_on);
-print_message("Received: $title, $name, $given_names, $gender, $email, $id_company<br>", $print_message_on);
+print_message("Received: $title, $name, $given_names, $gender, $email, $id_company, $company_name<br>", $print_message_on);
+print_message("$mobile, $job_title, $company_type, $country, $industry, $challenges, $goal, $passcode", $print_message_on);
 print_message("Answer ids came from previous page:", $print_message_on);
-// print_r( $answer_ids);
+//print_r( $answer_ids);
 print_message("<hr>", $print_message_on);
 
 print_message("Going to store tester data into DB <br>", $print_message_on);
@@ -63,6 +74,7 @@ $time = time();
 $token = crypt($name.$email.rand(1,100).$time, '_J9..mind');
 $query = "INSERT INTO testers VALUES ('', $id_company, '".
 										str_replace('"','\'',$title)."','".
+										str_replace('"','\'',$company_name)."','".
 										str_replace('"','\'',$name)."','".
 										str_replace('"','\'',$given_names)."','".
 										str_replace('"','\'',$gender)."','".
@@ -88,22 +100,36 @@ if ($result) {
 		$query = "INSERT INTO testers_answers VALUES ('', $current_answer_id, $max_tester_id)";
 		$answers_created = $DB->qry($query);
 	}
-
+	print_message("All statemenrs stored in DB<br>", $print_message_on);
+	
 	$answers_counts_created;
 	foreach ($leadership as $current_leadership) {
-		$id_tester 		= $current_leadership["id_tester"];
 		$id_strategic_management	= $current_leadership["id_strategic_management"];
 		$id_leadership= $current_leadership["id_leadership"];
 		$leadership_count 	= $current_leadership["leadership_count"];
-		$leadership_percentage= round(($current_leadership["leadership_count"] / 72) * 100, 2);
+		$leadership_percentage= round(($current_leadership["leadership_count"] / $total_questions_to_calculate_percentage) * 100, 2);
 	
 // 		print_message("current leadership id: $max_tester_id, $id_strategic_management, $id_leadership, $leadership_count, $leadership_percentage <br>", $print_message_on);
 		$query = "INSERT INTO testers_answers_counts VALUES ('', $max_tester_id, $id_strategic_management, $id_leadership, $leadership_count, $leadership_percentage)";
 // 		print_message("SQL: => $query", $print_message_on);
 		$answers_counts_created = $DB->qry($query);
 	}
+
+	$query = "INSERT INTO testers_add_more VALUES ('', $max_tester_id, '".
+			str_replace('"','\'',$mobile)."','".
+			str_replace('"','\'',$job_title)."','".
+			str_replace('"','\'',$company_type)."','".
+			str_replace('"','\'',$country)."','".
+			str_replace('"','\'',$industry)."','".
+			str_replace('"','\'',$challenges)."','".
+			str_replace('"','\'',$goal)."','".
+			str_replace('"','\'',$passcode)."')";
 	
-	if ($answers_created) {
+	$result = $DB->qry($query);
+	print_message("Tester add more info stored in DB: $result <br>", $print_message_on);
+	print_message("<hr>", $print_message_on);
+	
+	if ($answers_created && $answers_counts_created && $result) {
 		//All good!
 		print_message("All answers stored in DB<br>", $print_message_on);
 	}
@@ -119,9 +145,13 @@ else {
 
 print_message("<hr> Assessement process completed", $print_message_on);
 
-ob_start();
-header("location: index_ext.php?id_tester=$max_tester_id");
-ob_end_flush();
+if ($print_message_on)
+	DIE("STOPPED - DEBUG IS ON");
+else {
+	ob_start();
+	header("location: thankyou.php");
+	ob_end_flush();
+}
 
 ?> 
 

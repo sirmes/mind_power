@@ -63,8 +63,8 @@ while($r = mysql_fetch_assoc($strategic_management)) {
 }
 
 //================== Bring tester data ===============
-$query = "select t.id as tester_id, title, t.name, email, c.name company, date_format(created_date, '%M %D, %Y') created_date".
-			" from testers t, companies c where c.id = t.id_company and t.id = $tester_id";
+$query = "select t.id as tester_id, title, t.name, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".
+			" from testers t where t.id = $tester_id";
 $tester = $DB->qry($query);
 
 $tester_json = array();

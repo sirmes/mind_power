@@ -1,8 +1,10 @@
 $(document).ready(function() {
 	mP.init();
-	mP.page1.controller();
+	// mP.page1.controller();
 	mP.pagination();
 	mP.viewAll();
+	BrowserDetect.init();
+	mP.findBrowser();
 });
 
 var mP = {
@@ -29,7 +31,7 @@ var mP = {
 			else
 				mP.$mid_container.html(_string);
 			_string =[];
-			_string.push('<div id="page1-3" style="float: right; margin-top: -139px;"><img src="img/page1-3.png" /> </div>');
+			_string.push('<div id="page1-3" style="bottom: 1px; position: absolute; right: 0;"><img src="img/page1-3.png" /> </div>');
 			_string = _string.join();
 			if (_id)
 				$('#bot-container', $('#'+_id).parent()).append(_string);
@@ -290,7 +292,20 @@ var mP = {
 		view: '',
 		controller: function (_id){
 			var _string =[];
-			_string.push('<div style=""><div id="page8-1" style=" position: relative;width: 100%;"><div style="top:5px; position:relative;"><img src="img/page8-1.png" style="width:939px;"/></div>');
+			_string.push('<div id="page8-1" style="position:relative;"><img src="img/8-new.png" style="width:700px;"/></div>');
+			_string = _string.join('');
+			if (_id)
+				$('#'+_id, mP.$mid_container).html(_string);
+			else
+				mP.$mid_container.html(_string);
+			mP.$bot_container.html('');
+		}
+	},
+	page9: {
+		view: '',
+		controller: function (_id){
+			var _string =[];
+			_string.push('<div style=""><div id="page9-1" style=" position: relative;width: 100%;"><div style="top:5px; position:relative;"><img src="img/page8-1.png" style="width:939px;"/></div>');
 			_string.push('<ul style="list-style: none outside none; padding:0px; margin:0px;">');
 			$(top3).each(function (num1, it1){
 				_string.push('<li class="top3"><span>' + it1.leadership + ' (' + it1.leadership_percentage + '%) </span></li>');
@@ -311,14 +326,14 @@ var mP = {
 			mP.$bot_container.html('');
 		}
 	},
-	page9: {
+	page10: {
 		view: '',
 		controller: function (_id){
 			var _string =[];
 			var _currentGroup = '';
 			var _newGroup = false;
 			var _firstTime = false;
-			_string.push('<div style=""><div id="page9-1" style=" position: relative;width: 100%;">');
+			_string.push('<div style=""><div id="page10-1" style=" position: relative;width: 100%;">');
 			_string.push('<div style="top:5px; position:relative;"><img src="img/page9-1.png" style="width:939px;"/></div>');
 			$(json8).each(function (num1, it1){
 				if (_currentGroup =='' ){
@@ -349,14 +364,14 @@ var mP = {
 			mP.$bot_container.html('');
 		}
 	},
-	page10: {
+	page11: {
 		view: '',
 		controller: function (_id){
 			var _string =[];
 			var _currentGroup = '';
 			var _newGroup = false;
 			var _firstTime = false;
-			_string.push('<div style=""><div id="page10-1" style=" position: relative;width: 100%;">');
+			_string.push('<div style=""><div id="page11-1" style=" position: relative;width: 100%;">');
 			_string.push('<div style="top:5px; position:relative;"><img src="img/page10-1.png" style="width:939px;"/></div>');
 			$(json9).each(function (num1, it1){
 				if (_currentGroup =='' ){
@@ -373,9 +388,9 @@ var mP = {
 					_firstTime = false;	
 				}
 				if (_firstTime)
-					_string.push('<ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><img src="img/page10-2.png" /><span style="color:red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
+					_string.push('<ul ><img src="img/page10-2.png" /><span style="color:red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
 				else if (_newGroup)
-					_string.push('</ul><ul style="list-style: none outside none; padding:0px; margin: 15px 0 0 30px;"><img src="img/page10-2.png" /><span style="color: red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
+					_string.push('</ul><ul ><img src="img/page10-2.png" /><span style="color: red; font-size: 20px; font-weight: bold;">'+_currentGroup+'</span>');
 				_string.push('<li class=""><span>' + it1.question + ' </span></li>');
 			});
 			_string.push('</div></ul>');
@@ -430,16 +445,17 @@ var mP = {
 	},
 	viewAll: function (){
 		var showAll = function (_this){
-			var _pageString = 	'<div id="p1"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container1"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p2"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container2"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p3"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container3"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p4"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container4"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p5"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container5"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p6"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container6"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p7"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container7"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p8"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container8"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p9"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container9"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>'+
-								'<div id="p10"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container10"></div><div id="bot-container"><img src="img/mp-copyright.png" /></div></div>';
+			var _pageString = 	'<div id="p1" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container1"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p2" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container2"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p3" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container3"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p4" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container4"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p5" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container5"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p6" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container6"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p7" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container7"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p8" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container8"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p9" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container9"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p10" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container10"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p11" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container11"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>';
 			mP.$mid_container.html(_pageString);
 			var initAll = function (){
 				mP.page1.controller('mid-container1');
@@ -452,9 +468,146 @@ var mP = {
 				mP.page8.controller('mid-container8');
 				mP.page9.controller('mid-container9');
 				mP.page10.controller('mid-container10');
+				mP.page11.controller('mid-container11');
 			};
 			initAll();
 		};
-		$('#nav-control-all', mP.$pagination).click(showAll);
+		return showAll();
+		//$('#nav-control-all', mP.$pagination).click(showAll);
+	},
+	findBrowser: function(){
+		var _currentB = BrowserDetect.browser;
+		if (_currentB.toLowerCase().indexOf('chrome') > -1){
+			this.$mid_container.addClass('chrome');
+		}
+		else if (_currentB.toLowerCase().indexOf('fire') > -1){
+			this.$mid_container.addClass('firefox');
+			if ($('#page11-1 li').index() > 25)
+				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 22+'px')
+		}
+		else{
+			this.$mid_container.addClass('firefox');
+			if ($('#page11-1 li').index() > 25)
+				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 22+'px')
+		}
+
+
 	}
+};
+
+var BrowserDetect = {
+	init: function () {
+		this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+		this.version = this.searchVersion(navigator.userAgent)
+			|| this.searchVersion(navigator.appVersion)
+			|| "an unknown version";
+		this.OS = this.searchString(this.dataOS) || "an unknown OS";
+	},
+	searchString: function (data) {
+		for (var i=0;i<data.length;i++)	{
+			var dataString = data[i].string;
+			var dataProp = data[i].prop;
+			this.versionSearchString = data[i].versionSearch || data[i].identity;
+			if (dataString) {
+				if (dataString.indexOf(data[i].subString) != -1)
+					return data[i].identity;
+			}
+			else if (dataProp)
+				return data[i].identity;
+		}
+	},
+	searchVersion: function (dataString) {
+		var index = dataString.indexOf(this.versionSearchString);
+		if (index == -1) return;
+		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+	},
+	dataBrowser: [
+		{
+			string: navigator.userAgent,
+			subString: "Chrome",
+			identity: "Chrome"
+		},
+		{ 	string: navigator.userAgent,
+			subString: "OmniWeb",
+			versionSearch: "OmniWeb/",
+			identity: "OmniWeb"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Apple",
+			identity: "Safari",
+			versionSearch: "Version"
+		},
+		{
+			prop: window.opera,
+			identity: "Opera",
+			versionSearch: "Version"
+		},
+		{
+			string: navigator.vendor,
+			subString: "iCab",
+			identity: "iCab"
+		},
+		{
+			string: navigator.vendor,
+			subString: "KDE",
+			identity: "Konqueror"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Firefox",
+			identity: "Firefox"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Camino",
+			identity: "Camino"
+		},
+		{		// for newer Netscapes (6+)
+			string: navigator.userAgent,
+			subString: "Netscape",
+			identity: "Netscape"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "MSIE",
+			identity: "Explorer",
+			versionSearch: "MSIE"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Gecko",
+			identity: "Mozilla",
+			versionSearch: "rv"
+		},
+		{ 		// for older Netscapes (4-)
+			string: navigator.userAgent,
+			subString: "Mozilla",
+			identity: "Netscape",
+			versionSearch: "Mozilla"
+		}
+	],
+	dataOS : [
+		{
+			string: navigator.platform,
+			subString: "Win",
+			identity: "Windows"
+		},
+		{
+			string: navigator.platform,
+			subString: "Mac",
+			identity: "Mac"
+		},
+		{
+			   string: navigator.userAgent,
+			   subString: "iPhone",
+			   identity: "iPhone/iPod"
+	    },
+		{
+			string: navigator.platform,
+			subString: "Linux",
+			identity: "Linux"
+		}
+	]
+
 };

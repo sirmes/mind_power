@@ -53,7 +53,6 @@
 							<p>
 								<span class="form1-text dark-orange">Please provide your name</span>
 							</p>
-							<br />
 							<p>
 								<label for="form1-title">Title: </label>
 								<select id="form1-title" name="title" onchange="setGender(document.send_questions);">
@@ -77,6 +76,7 @@
 									<input type="radio" name="gender" value="Male" style="margin-left: 30px;" >Male <input type="radio" name="gender" value="Female">Female
 								</span>
 							</p>
+							<br />
 							<ul class="form1-text dark-orange">
 								<li>Instruction</li>
 								<li>-	There are totally 72 questions and please answer all of them. (It takes about 20 minutes)</li>
@@ -86,8 +86,6 @@
 							</p>
 						</div>
 						<div id="form2">
-							<p>
-								<p>
 									<table cellspacing="0" border="0" id="questions_statements">
 										<tr style="background-color: #666666;  color: white;"> 
 											<th>
@@ -137,8 +135,6 @@
 										</tr>
 										<? ++$i; $temp_answer_group = $answer_group; } ?>
 									</table>
-								</p>
-							</p>
 						</div>
 						<div id="form3">
 							<p class="dark-orange">
@@ -148,7 +144,7 @@
 							<table >
 								<tr>
 						          	<td height="30">E-mail:</td>
-						          	<td height="30"><input type="text" name="email" maxlength="120" style="width:200px"></td>
+						          	<td height="30"><input type="text" name="email" maxlength="50" style="width:400px"></td>
 						        </tr>
 						        <tr>
 						          	<td height="30">Contact phone number:</td>
@@ -160,7 +156,7 @@
 						        </tr>
 						        <tr>
 						        	<td>Company Name: </td>
-						        	<td><input type="text" name="company_name" maxlength="120" style="width:200px"></td>
+						        	<td><input type="text" name="company_name" maxlength="80" style="width:500px"></td>
 						        </tr>
 						        <tr>
 						          	<td height="30">Company Type:</td>
@@ -176,7 +172,8 @@
 						          	</td>
 						        </tr>
 						    	<tr>
-						          	<td height="30" colspan="2">Country/City where you station:
+						          	<td height="30" colspan="1">Country/City where you station:</td>
+							        <td height="30" colspan="1">
 							            <label>
 						              		<select name="country" id="country">
 						              			<option value="">(Select one)</option>
@@ -238,19 +235,20 @@
 						        	<td height="30" colspan="2"><textarea name="goal" cols="50" rows="5" id="goal"></textarea></td>
 						        </tr>
 						        <tr>
-						        	<td height="30" colspan="2">A passcode to retrieve your  report (min 4 and max 8 alphanumeric char) </td>
-						        	<td height="30" colspan="2">
+						        	<td height="30" colspan="1">A passcode to retrieve your report (minimum 4 and maximum 8 alphanumeric characters) </td>
+						        	<td height="30" colspan="1">
 							          	<label>
 						          			<input type="text" name="passcode" id="passcode" maxlength="8"/>
 						          		</label>
 						          	</td>
+						          	<td></td>
 						        </tr>
 							</table>
 						</div>
 						<input type="button" onClick="validate(document.send_questions);" value="Submit" style="margin-left: 320px;" />
 						<div id="footer">
 							<p>
-								<span class="form3-text black">Thank you for your participation.  The mindPower Leadership™ self-assessment report will be distributed to you in due course.</span>
+								<span class="form3-text black">Thank you for your participation. The mindPower Leadership™ self-assessment report will be distributed to you in due course.</span>
 							</p>
 							<div id="copy-right">
 								<img src="images_new/copyright.gif" />

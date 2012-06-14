@@ -24,17 +24,25 @@
 			#mP #container #mid-container #form1 input{padding-left:0px;}
 
 			#mP #container #mid-container #form2 .form2-even-row{}
-			#mP #container #mid-container #form2 .form2-odd-row{background-color:#F79900;}
+			#mP #container #mid-container #form2 .form2-odd-row{background-color:#FDD017;}
 			#mP #container #mid-container #form2 .form2-index{text-align:right;}
 			
 			#mP #container #mid-container #form3 {padding-left:10px;}
 			#mP #container #mid-container #form3 .dark-orange{color:#A47000; font-weight: bold; }
 			#mP #container #mid-container #form3 .black{color:black;}
 
+			#mP #container #footer{margin-top: 15px;}
 			#mP #container #footer p{padding:15px;}
 			#mP #container #footer .form3-text{font-weight: bold; color:#A47000;}
 			#mP #container #footer #copy-right{background-color: #363636;    height: 24px;}
 			#mP #container #footer #copy-right img{float:right;}
+
+			.error-input{border:1px solid red}
+			.error-question{background-color: red !important;}
+
+			.error-question-num{color: red !important;}			
+			
+			#questions_statements .form2-li{list-style-image:none;  list-style-position:outside;  list-style-type:square;  margin-left:15px;  padding-left:1em;  text-indent:-1em;}
 		</style>
 		<script type="text/javascript" src="admin/js/index_frontend_code.js"></script>
 	<body>
@@ -55,7 +63,7 @@
 							</p>
 							<p>
 								<label for="form1-title">Title: </label>
-								<select id="form1-title" name="title" onchange="setGender(document.send_questions);">
+								<select class="to-validate" id="form1-title" name="title" onchange="setGender(document.send_questions);">
 									<option value="">(select one)</option>
 									<option value="Mr.">Mr.</option>
 									<option value="Ms.">Ms.</option>
@@ -65,25 +73,24 @@
 							</p>
 							<p>
 								<label for="form1-sureame" class="form1-left">Surname: </label>
-								<input id="form1-surname" type="text" name="name" maxlength="120">
+								<input onkeypress="return isNotNumberKey(event)" class="to-validate" id="form1-surname" type="text" name="name" maxlength="120">
 							</p>
 							<p>
 								<label for="form1-givennames" class="form1-left">Given names: </label>
-								<input id="form1-givennames" type="text" name="given_names" maxlength="120">
+								<input  onkeypress="return isNotNumberKey(event)" class="to-validate" id="form1-givennames" type="text" name="given_names" maxlength="120">
 							</p>
 							<p style="padding-top: 10px;">
 								<span>Gender:
-									<input type="radio" name="gender" value="Male" style="margin-left: 30px;" >Male <input type="radio" name="gender" value="Female">Female
+									<input class="gender-validate" type="radio" checked="" name="gender" value="Male" style="margin-left: 30px;" >Male <input class="gender-validate" type="radio" name="gender" value="Female">Female
 								</span>
 							</p>
-							<br />
 							<ul class="form1-text dark-orange">
-								<li>Instruction</li>
-								<li>-	There are totally 72 questions and please answer all of them. (It takes about 20 minutes)</li>
-								<li>-	For each question, please choose the statement that reflect and align with your “current” mindset and behaviors as a leader</li>
+								<li>Instructions</li>
+								<li>-	There are 72 questions in total. Please answer all of them. (It takes about 20 minutes)</li>
+								<li>-	For each question, please choose the statement that reflects and aligns with your “current” mindset and behaviors as a leader</li>
 								<li>-	If neither statement accurately portrays you, please pick the one which you are more likely to fall on</li>
 								<li>-	If both statements accurately portray you, please pick the one which happens most frequently</li>
-							</p>
+							</ul>
 						</div>
 						<div id="form2">
 									<table cellspacing="0" border="0" id="questions_statements">
@@ -122,7 +129,7 @@
 												<span class="form2-index"> <? if ($temp_answer_group != $answer_group) echo "$answer_group"+"."; ?> </span>
 											</td>
 											<td>
-												<span> <? echo "$question"; ?> </span>
+												<li class="form2-li"> <? echo "$question"; ?> </li>
 											</td>
 											<td>
 												<span>
@@ -144,25 +151,25 @@
 							<table >
 								<tr>
 						          	<td height="30">E-mail:</td>
-						          	<td height="30"><input type="text" name="email" maxlength="50" style="width:400px"></td>
+						          	<td height="30"><input class="to-validate" type="text" name="email" maxlength="50" style="width:400px"></td>
 						        </tr>
 						        <tr>
 						          	<td height="30">Contact phone number:</td>
-						          	<td height="30"><input type="text" name="mobile" id="mobile" maxlength="30" /></td>
+						          	<td height="30"><input class="to-validate" type="text" name="mobile" id="mobile" maxlength="30" /></td>
 						        </tr>
 						        <tr>
 						          	<td height="30">Job Title:</td>
-						          	<td height="30"><input type="text" name="job_title" id="job_title" maxlength="120" /></td>
+						          	<td height="30"><input  class="to-validate" type="text" name="job_title" id="job_title" maxlength="120" /></td>
 						        </tr>
 						        <tr>
 						        	<td>Company Name: </td>
-						        	<td><input type="text" name="company_name" maxlength="80" style="width:500px"></td>
+						        	<td><input  class="to-validate" type="text" name="company_name" maxlength="80" style="width:500px"></td>
 						        </tr>
 						        <tr>
 						          	<td height="30">Company Type:</td>
 						          	<td height="30">
 						          		<label>
-								            <select name="company_type" id="company_type">
+								            <select class="to-validate" name="company_type" id="company_type">
 								              	<option value="">(Select one)</option>
 								              	<option value="Listed company">Listed company</option>
 								              	<option value="Non-listed commercial firm">Non-listed commercial firm</option>
@@ -175,15 +182,16 @@
 						          	<td height="30" colspan="1">Country/City where you station:</td>
 							        <td height="30" colspan="1">
 							            <label>
-						              		<select name="country" id="country">
+						              		<select class="to-validate" name="country" id="country" onchange="otherCountry(this);">
 						              			<option value="">(Select one)</option>
 						                		<option value="China">China</option>
 						              			<option value="Hong Kong">Hong Kong</option>
 						                		<option value="Singapore">Singapore</option>
 						                		<option value="Taiwan">Taiwan</option>
-						                		<option value="Others ">Others </option>
+						                		<option value="Others">Others - (Please specify) </option>
 						              		</select>
 						            	</label>
+										<input type="text" id="country_other" maxlength="80" style="width:170px; display:none">
 						            </td>
 						       	</tr>
 						        <tr>
@@ -192,7 +200,7 @@
 						          	</td>
 						          	<td height="30">
 						          		<label>
-						            		<select name="industry" id="industry">
+						            		<select  class="to-validate" name="industry" id="industry" onchange="otherIndustry(this);">
 						            			<option value="">(Select one)</option>
 						              			<option value="Accommodation and food services">Accommodation and food services</option>
 						              			<option value="Business services">Business services</option>
@@ -213,9 +221,10 @@
 												<option value="Storage">Storage</option>
 												<option value="Transportation">Transportation</option>
 												<option value="Wholesale">Wholesale</option>
-												<option value="Others">Others</option>
+												<option value="Others">Others - (Please specify)</option>
 						           			</select>
 						          		</label>
+										<input type="text" id="industry_other" maxlength="120" style="width:285px; display:none">
 						          	</td>
 						        </tr>
 						        <tr style="display:none">
@@ -238,7 +247,7 @@
 						        	<td height="30" colspan="1">A passcode to retrieve your report (minimum 4 and maximum 8 alphanumeric characters) </td>
 						        	<td height="30" colspan="1">
 							          	<label>
-						          			<input type="text" name="passcode" id="passcode" maxlength="8"/>
+						          			<input class="to-validate" type="text" name="passcode" id="passcode" maxlength="8"/>
 						          		</label>
 						          	</td>
 						          	<td></td>
@@ -246,17 +255,20 @@
 							</table>
 						</div>
 						<input type="button" onClick="validate(document.send_questions);" value="Submit" style="margin-left: 320px;" />
-						<div id="footer">
-							<p>
-								<span class="form3-text black">Thank you for your participation. The mindPower Leadership™ self-assessment report will be distributed to you in due course.</span>
-							</p>
-							<div id="copy-right">
-								<img src="images_new/copyright.gif" />
-							</div>
-						</div>
 					</form>
+				</div>
+				<div id="footer">
+					<!-- <p>
+						<span class="form3-text black">Thank you for your participation. The mindPower Leadership™ self-assessment report will be distributed to you in due course.</span>
+					</p> -->
+					<div id="copy-right">
+						<img src="images_new/copyright.gif" />
+					</div>
 				</div>
 			</div>
 		</div>
+		<script>
+			$('[name="gender"]').first().attr('checked','checked')
+		</script>
 	</body>
 </html>

@@ -402,6 +402,21 @@ var mP = {
 			mP.$bot_container.html('');
 		}
 	},
+	page12: {
+		view: '',
+		controller: function (_id){
+			var _string =[];
+			_string.push('<div style=""><div id="page12-1" style=" position: relative;width: 100%;">');
+			_string.push('<div style="top:5px; position:relative;"><img src="img/page12-1.png" style="width:939px;"/></div>');
+			_string.push('</div>');
+			_string = _string.join('');
+			if (_id)
+				$('#'+_id, mP.$mid_container).html(_string);
+			else
+				mP.$mid_container.html(_string);
+			mP.$bot_container.html('');
+		}
+	},
 	pagination: function (){
 		var updatePage = function (_this, _cur, _next, _prev){
 			$(_this).attr('data-current', _cur);
@@ -455,7 +470,8 @@ var mP = {
 								'<div id="p8" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container8"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
 								'<div id="p9" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container9"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
 								'<div id="p10" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container10"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
-								'<div id="p11" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container11"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>';
+								'<div id="p11" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container11"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>'+
+								'<div id="p12" class="report-template"><div id="top-container"><img src="img/mp-logo.png"/></div><div id="mid-container12"></div><div id="bot-container"><div class="copyR"><img src="img/mp-copyright.png" /></div></div></div>';
 			mP.$mid_container.html(_pageString);
 			var initAll = function (){
 				mP.page1.controller('mid-container1');
@@ -469,6 +485,7 @@ var mP = {
 				mP.page9.controller('mid-container9');
 				mP.page10.controller('mid-container10');
 				mP.page11.controller('mid-container11');
+				mP.page12.controller('mid-container12');
 			};
 			initAll();
 		};
@@ -483,12 +500,12 @@ var mP = {
 		else if (_currentB.toLowerCase().indexOf('fire') > -1){
 			this.$mid_container.addClass('firefox');
 			if ($('#page11-1 li').index() > 25)
-				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 22+'px')
+				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 25+'px')
 		}
 		else{
 			this.$mid_container.addClass('firefox');
 			if ($('#page11-1 li').index() > 25)
-				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 22+'px')
+				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 25+'px')
 		}
 
 

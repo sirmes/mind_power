@@ -22,8 +22,6 @@
 	       	//This is for new HK host
 //         	$database="ceompowe_mindpower";
 // 	       	$hostname="127.0.0.1";
-//         	$username="ceompowe";
-//         	$password="8y5iAf1q7D";
         	
             self::$DB_Name = $database;
             self::$DB_Conn = mysql_connect($hostname . ":" . $hostport, $username, $password);

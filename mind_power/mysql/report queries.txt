@@ -34,3 +34,23 @@ and t.id_question = q.id
 and s.id = q.id_sub_category
 group by question
 order by 3 desc, 1, 2;
+
+------- Extract raw information from DB to cross checking --------
+
+SELECT t.name, t.given_names, ta.id, qa.question, l.name, sm.name
+FROM testers t, testers_answers ta, questions_answers qa, leadership l, strategic_management sm
+WHERE t.id =11
+AND t.id = ta.id_tester
+and id_question = qa.id
+and l.id = qa.id_leadership
+and sm.id = qa.id_strategic_management
+LIMIT 0 , 30000
+
+SELECT t.name, t.given_names, l.name, sm.name, tac.leadership_count, tac.leadership_percentage
+FROM testers t, leadership l, strategic_management sm,
+testers_answers_counts tac
+WHERE t.id =11
+and l.id = tac.id_leadership
+and sm.id = tac.id_strategic_management
+and tac.id_tester = t.id
+LIMIT 0 , 30000

@@ -63,7 +63,8 @@ while($r = mysql_fetch_assoc($strategic_management)) {
 }
 
 //================== Bring tester data ===============
-$query = "select t.id as tester_id, title, t.name, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".
+//$query = "select t.id as tester_id, title, t.name, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".				// Commented by Plato 2012-06-18
+$query = "select t.id as tester_id, title, t.name, t.given_names, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".	// Added by Plato 2012-06-18
 			" from testers t where t.id = $tester_id";
 $tester = $DB->qry($query);
 

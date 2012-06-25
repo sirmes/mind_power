@@ -72,12 +72,15 @@ function validate(form){
 	
 	if ($('#industry').prop('selectedIndex') == 5)
 		$('#industry').find('option').eq(5).attr('value','Other-' + $('#industry_other').val());
-		
-	if (form.passcode.value.length < 4 || form.passcode.value.length > 8) {
+
+// Removed by Plato 2012-06-18 (Hidden passcode field for demo) ------------
+/*	if (form.passcode.value.length < 4 || form.passcode.value.length > 8) {
 		alert('Please enter passcode min 4 and max 8 alphanumeric char!');
 		form.passcode.focus();
 		return;
 	}
+*/
+// Ended by Plato 2012-06-18 (Hidden passcode field for demo) ------------
 
 	form.submit();
 }
@@ -93,6 +96,15 @@ function validateEmail(value)
 
 	return true;
 }
+
+// Added by Plato 2012-06-18 (Comment by Isabella: Reset bg color when sected) --------
+function resetQuestionBackgroundColor(answer) {
+	if ($('#'+answer.id).parent().parent().parent().find('td').last().hasClass('error-question')) {
+		$('#'+answer.id).parent().parent().parent().find('td').last().removeClass('error-question');
+		$('#'+answer.id).parent().parent().parent().next().find('td').last().removeClass('error-question');
+	}
+}
+// Ended by Plato 2012-06-18 (Comment by Isabella: Reset bg color when sected) --------
 	
 function validateQuestions() {
 
@@ -112,8 +124,8 @@ function validateQuestions() {
 		$(found[i]).parent().parent().parent().removeClass('error-question');
     	$(found[i]).parent().parent().parent().next().removeClass('error-question');
 		if (found[i].checked == false && found[i+1].checked == false){		
-    		$(found[i]).parent().parent().parent().find('.form2-index').parent().addClass('error-question-num');
-    		$(found[i]).parent().parent().parent().next().find('.form2-index').parent().addClass('error-question-num');
+//    		$(found[i]).parent().parent().parent().find('.form2-index').parent().addClass('error-question-num');			// Commented by Plato 2012-06-18 (Comment by Isabella: Q# don't get red)
+//    		$(found[i]).parent().parent().parent().next().find('.form2-index').parent().addClass('error-question-num');		// Commented by Plato 2012-06-18 (Comment by Isabella: Q# don't get red)
 			
 			$(found[i]).parent().parent().parent().find('td').last().addClass('error-question');
 			$(found[i]).parent().parent().parent().next().find('td').last().addClass('error-question');

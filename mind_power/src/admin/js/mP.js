@@ -5,6 +5,7 @@ $(document).ready(function() {
 	mP.viewAll();
 	BrowserDetect.init();
 	mP.findBrowser();
+	mP.addTickAndCross();
 });
 
 var mP = {
@@ -24,7 +25,7 @@ var mP = {
 			var _string =[];
 			_string.push('<div id="page1-1"><img src="img/page1-1.png" /></div>');
 			_string.push('<div id="page1-2" >'+
-				'<span>' + $(json2).first().prop('title') + '.' + $(json2).first().prop('name') + '</span><br /><span>'+$(json2).first().prop('created_date')+'</span></div>');
+				'<span>' + $(json2).first().prop('title') + $(json2).first().prop('name') + '</span><br /><span>'+$(json2).first().prop('created_date')+'</span></div>');
 			_string = _string.join('');
 			if (_id)
 				$('#'+_id, mP.$mid_container).html(_string);
@@ -67,7 +68,7 @@ var mP = {
 		view: '',
 		controller: function (_id){
 			var _string =[];
-			_string.push('<div id="page4-1" style="position:relative;"><img src="img/page4-1.png" style="width:939px;"/></div>');
+			_string.push('<div id="page4-1" style="position:relative;"><img src="img/page4-1.png" style="width:939px; height: 665px;"/></div>');
 			_string = _string.join('');
 			if (_id)
 				$('#'+_id, mP.$mid_container).html(_string);
@@ -80,16 +81,16 @@ var mP = {
 		view: '',
 		controller: function (_id){
 			if (_id)
-				$('#'+_id, mP.$mid_container).html('<div id="addText" style="position:relative; left:0px; top:0px; z-index:1;"></div><div id="chart5"></div><div id="mp-people"><img src="img/mp-people.png" /></div><div id="mp-strategic"><img src="img/mp-strategic.png" /></div><div id="mp-business"><img src="img/mp-business.png" /></div>');
+				$('#'+_id, mP.$mid_container).html('<div id="addText" style="position:relative; left:0px; top:0px; z-index:1;"></div><div id="chart5" style="height:500px; width:700px;"></div><div id="mp-people"><img src="img/mp-people.png" /></div><div id="mp-strategic"><img src="img/mp-strategic.png" /></div><div id="mp-business"><img src="img/mp-business.png" /></div>');
 			else
 				mP.$mid_container.html('<div id="addText" style="position:relative; left:0px; top:0px; z-index:1;"></div><div id="chart"></div><div id="mp-people"></div><div id="mp-strategic"></div><div id="mp-business"></div>');
 			mP.$bot_container.html('');
 			var chart;
 			var colors = Highcharts.getOptions().colors,
 				categories = [
-					(parseFloat($(json7).get(0)['leadership_percentage']) + parseFloat($(json7).get(1)['leadership_percentage']) + parseFloat($(json7).get(2)['leadership_percentage'])).toFixed(2) + '%', 
-					(parseFloat($(json7).get(3)['leadership_percentage']) + parseFloat($(json7).get(4)['leadership_percentage']) + parseFloat($(json7).get(5)['leadership_percentage'])).toFixed(2) + '%', 
-					(parseFloat($(json7).get(6)['leadership_percentage']) + parseFloat($(json7).get(7)['leadership_percentage']) + parseFloat($(json7).get(8)['leadership_percentage'])).toFixed(2) + '%',
+					(parseInt(Math.round(parseFloat($(json7).get(0)['leadership_percentage']))) + parseInt(Math.round(parseFloat($(json7).get(1)['leadership_percentage']))) + parseInt(Math.round(parseFloat($(json7).get(2)['leadership_percentage'])))) + '% <span style="font-size:14px;">仁</span>', 
+					(parseInt(Math.round(parseFloat($(json7).get(3)['leadership_percentage']))) + parseInt(Math.round(parseFloat($(json7).get(4)['leadership_percentage']))) + parseInt(Math.round(parseFloat($(json7).get(5)['leadership_percentage'])))) + '% <span style="font-size:14px;">智</span>', 
+					(parseInt(Math.round(parseFloat($(json7).get(6)['leadership_percentage']))) + parseInt(Math.round(parseFloat($(json7).get(7)['leadership_percentage']))) + parseInt(Math.round(parseFloat($(json7).get(8)['leadership_percentage'])))) + '% <span style="font-size:14px;">勇</span>',
 				],
 				name = ' ',
 				data = [
@@ -132,7 +133,7 @@ var mP = {
 						distance: -35
 					}
 				}, 
-				{name: 'Versions', data: versionsData, innerSize: '60%',
+				{name: 'Versions', data: versionsData, innerSize: '55%',
 				dataLabels: {
 					formatter: function() {
 						// display only if larger than 1
@@ -142,11 +143,10 @@ var mP = {
 				
 				}]
 			}, function(chart){
-					 var textX = chart.plotLeft + (chart.plotWidth  * 0.5);
-				        var textY = chart.plotTop  + (chart.plotHeight * 0.5);
-
-				        var span = '<div id="pieChartInfoText" style="position:absolute; text-align:center;">';
-				        span += '<div id="pie-logo" style="height: 139px;    margin-left: -5px;    margin-top: 15px;    width: 148px;"><img src="img/pielogo-1.png" /></div><br>';
+					var textX = chart.plotLeft + (chart.plotWidth  * 0.5);
+				    var textY = chart.plotTop  + (chart.plotHeight * 0.5);
+	    			var span = '<div id="pieChartInfoText" style="position:absolute; text-align:center;">';
+				        span += '<div id="pie-logo" style="height: 139px;   margin-top: 15px;    width: 148px;"><img src="img/pielogo-1.png" /></div><br>';
 				        span += '</div>';
 
 				        $("#addText").append(span);
@@ -161,7 +161,7 @@ var mP = {
 		view: '',
 		controller: function (_id){
 			if (_id)
-				$('#'+_id, mP.$mid_container).html('<div id="chart6"></div>');
+				$('#'+_id, mP.$mid_container).html('<div id="chart6" style="height:600px"></div>');
 			else
 				mP.$mid_container.html('<div id="chart6"></div>');
 
@@ -223,7 +223,7 @@ var mP = {
 		view: '',
 		controller: function (_id){
 			if (_id)
-				$('#'+_id, mP.$mid_container).html('<div id="chart7"></div>');
+				$('#'+_id, mP.$mid_container).html('<div id="chart7" style="height:600px;"></div>');
 			else
 				mP.$mid_container.html('<div id="chart7"></div>');
 			mP.$bot_container.html('');
@@ -490,7 +490,6 @@ var mP = {
 			initAll();
 		};
 		return showAll();
-		//$('#nav-control-all', mP.$pagination).click(showAll);
 	},
 	findBrowser: function(){
 		var _currentB = BrowserDetect.browser;
@@ -500,15 +499,55 @@ var mP = {
 		else if (_currentB.toLowerCase().indexOf('fire') > -1){
 			this.$mid_container.addClass('firefox');
 			if ($('#page11-1 li').index() > 25)
-				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 25+'px')
+				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() + 4.5 - 25+'px')
 		}
 		else{
 			this.$mid_container.addClass('firefox');
 			if ($('#page11-1 li').index() > 25)
-				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() - 25+'px')
+				$('#page11-1 ul').css('font-size', $('#page11-1 li').index() + 4.5 - 25+'px')
+		}
+	},
+	addTickAndCross: function (){
+		var _currentB = BrowserDetect.browser;
+		var _list = [];
+		var _temp_top  = $('#p6').position().top;
+		if (_currentB.toLowerCase().indexOf('chrome') > -1){
+			$('#mid-container6 .highcharts-data-labels rect').each(function (num1, it1){
+				_list.push({
+					val: 	$(it1).next().find('tspan').text().replace('%',''),
+					top: 	Math.abs($(it1).position().top),
+					left: 	Math.abs($(it1).position().left)
+				});
+			});
+			$(_list).each(function (num1, it1){
+				if (it1.val < 11){
+					$('#chart6 .highcharts-container').append('<img src="img/cross.png" style="position:absolute; z-index:1; top:'+ (it1.top -5) + 'px; left:' + (it1.left - 20) + 'px">');
+				}
+				else if (it1.val > 11){
+					$('#chart6 .highcharts-container').append('<img src="img/check.png" style="position:absolute; z-index:1; top:'+ ( it1.top -5) + 'px; left:' + (it1.left -20) + 'px;">');
+				}
+			});
+
+		}
+		else{
+			$('#mid-container6 .highcharts-data-labels tspan').each(function (num1, it1){
+				_list.push({
+					val: 	$(it1).text().replace('%',''),
+					top: 	Math.abs($(it1).position().top),
+					left: 	Math.abs($(it1).position().left)
+				});
+			});
+			$(_list).each(function (num1, it1){
+				if (it1.val < 11){
+					$('#chart6 .highcharts-container').append('<img src="img/cross.png" style="position:absolute; z-index:1; top:'+ (it1.top - _temp_top + 65 +20 - 130 -100) + 'px; left:' + (it1.left-250-14) + 'px">');
+				}
+				else if (it1.val > 11){
+					$('#chart6 .highcharts-container').append('<img src="img/check.png" style="position:absolute; z-index:1; top:'+ ( it1.top - _temp_top + 65 +20 - 130 -100) + 'px; left:' + (it1.left-250-14) + 'px;">');
+				}
+			});
 		}
 
-
+		//$('#mid-container6 .highcharts-data-labels tspan').first().position().top-$('#mid-container6 .highcharts-data-labels').position().top
 	}
 };
 

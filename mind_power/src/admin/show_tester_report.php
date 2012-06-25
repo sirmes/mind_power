@@ -20,7 +20,6 @@
 			#page8-2 ul li{}
 			
 			#nav-control a {padding-right:5px}
-			#pie-logo{}
 			#chart{width:800px; height:600px;}
 			
 			#mp-strategic{ left: -50px;    position: relative;    top: -540px;}
@@ -50,7 +49,8 @@
 
 			.firefox #p5{height: 815px;   width: 930px;}
 			.firefox #p5 #mid-container5{padding-top: 45px;}
-			.firefox #chart5{height:550px;}
+			.firefox #chart5{margin-left:100px;}
+			.firefox #pie-logo{margin-left: 85px;}
 
 			.firefox #p6{height: 815px;   width: 930px;}
 			.firefox #p6 #mid-container6{padding-top: 75px;}
@@ -72,51 +72,55 @@
 			.firefox #p11{height: 815px;   width: 930px;}
 			.firefox #p11 #mid-container11{}
 
+			.firefox #p12{height: 815px;   width: 930px;}
+
 			.firefox .copyR{bottom: 1px;    position: absolute;}
 			.firefox .report-template{ position: relative;}
 			.firefox #page11-1 ul{list-style: none outside none;    margin: 0;    padding: 20px 0 0 30px;}
 
 
 
-			.chrome #p1{height: 1050px;   width: 930px;}
+			.chrome #p1{height: 1100px;   width: 930px;}
 			.chrome #mid-container1{}
 			.chrome #page1-1{height: 200px;    left: 95px;    padding-top: 100px;    position: relative;}
 			.chrome #page1-2{font-size: 50px; padding-bottom: 50px;    padding-top: 45px;    position: relative;    text-align: center;}
 			.chrome #p1 #bot-container{bottom:0px;}
 			
-			.chrome #p2{height: 1050px;   width: 930px;}
+			.chrome #p2{height: 1100px;   width: 930px;}
 			.chrome #p2 #mid-container2{padding-top: 70px;}
 			
-			.chrome #p3{height: 1050px;   width: 930px;}
+			.chrome #p3{height: 1100px;   width: 930px;}
 			.chrome #p3 #mid-container3{padding-top:60px;}
 			
-			.chrome #p4{height: 1050px;   width: 930px;}
+			.chrome #p4{height: 1100px;   width: 930px;}
 			.chrome #p4 #mid-container4{padding-top: 20px;}
 			.chrome #p4 #bot-container{bottom:0px;margin-top:0px;}
 
-			.chrome #p5{height: 1050px;   width: 930px;}
+			.chrome #p5{height: 1100px;   width: 930px;}
 			.chrome #p5 #mid-container5{padding-top: 45px;}
 			.chrome #chart5{height:550px;}
 
-			.chrome #p6{height: 1050px;   width: 930px;}
+			.chrome #p6{height: 1100px;   width: 930px;}
 			.chrome #p6 #mid-container6{padding-top: 75px;}
 			.chrome #chart6{height:550px;}
 			
-			.chrome #p7{height: 1050px;   width: 930px;}
+			.chrome #p7{height: 1100px;   width: 930px;}
 			.chrome #chart7{height:550px;}
 			.chrome #p7 #mid-container7{padding-top: 75px;}
 
-			.chrome #p8{height: 1050px;   width: 930px;}
+			.chrome #p8{height: 1100px;   width: 930px;}
 			.chrome #p8 #mid-container8{padding-top: 50px;}
 
-			.chrome #p9{height: 1050px;   width: 930px;}
+			.chrome #p9{height: 1100px;   width: 930px;}
 			.chrome #p9 #mid-container9{padding-top: 60px;}
 
-			.chrome #p10{height: 1050px;   width: 930px;}
+			.chrome #p10{height: 1100px;   width: 930px;}
 			.chrome #p10 #mid-container10{padding-top: 30px;}
 
-			.chrome #p11{height: 1050px;   width: 930px;}
+			.chrome #p11{height: 1100px;   width: 930px;}
 			.chrome #p11 #mid-container11{padding-top: 30px;}
+
+			.chrome #p12{height: 1100px;   width: 930px;}
 
 			.chrome .copyR{bottom: 1px;    position: absolute;}
 			.chrome .report-template{ position: relative;}

@@ -37,9 +37,10 @@ order by 3 desc, 1, 2;
 
 ------- Extract raw information from DB to cross checking --------
 
-SELECT t.name, t.given_names, ta.id, qa.question, l.name, sm.name
-FROM testers t, testers_answers ta, questions_answers qa, leadership l, strategic_management sm
+SELECT t.*,tm.*, ta.id, qa.question, l.name, sm.name
+FROM testers t, testers_add_more tm, testers_answers ta, questions_answers qa, leadership l, strategic_management sm
 WHERE t.id =11
+and t.id = tm.id_tester
 AND t.id = ta.id_tester
 and id_question = qa.id
 and l.id = qa.id_leadership

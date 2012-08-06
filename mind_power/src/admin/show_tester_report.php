@@ -44,7 +44,7 @@
 			.firefox #p3 #mid-container3{padding-top:60px;}
 			
 			.firefox #p4{height: 815px;   width: 930px;}
-			.firefox #p4 #mid-container4{padding-top: 50px;}
+			.firefox #p4 #mid-container4{}
 			.firefox #p4 #bot-container{bottom:0px;margin-top:0px;}
 
 			.firefox #p5{height: 815px;   width: 930px;}
@@ -53,12 +53,12 @@
 			.firefox #pie-logo{margin-left: 85px;}
 
 			.firefox #p6{height: 815px;   width: 930px;}
-			.firefox #p6 #mid-container6{padding-top: 75px;}
+			.firefox #p6 #mid-container6{margin-top: 75px;}
 			.firefox #chart6{height:550px;}
 			
 			.firefox #p7{height: 815px;   width: 930px;}
 			.firefox #chart7{height:550px;}
-			.firefox #p7 #mid-container7{padding-top: 75px;}
+			.firefox #p7 #mid-container7{margin-top: 75px;}
 
 			.firefox #p8{height: 815px;   width: 930px;}
 			.firefox #p8 #mid-container8{padding-top: 50px;}
@@ -72,11 +72,15 @@
 			.firefox #p11{height: 815px;   width: 930px;}
 			.firefox #p11 #mid-container11{}
 
+			.firefox #p11-new{height: 815px;   width: 930px;}
+			.firefox #p11-new #mid-container11{}
+
 			.firefox #p12{height: 815px;   width: 930px;}
 
 			.firefox .copyR{bottom: 1px;    position: absolute;}
 			.firefox .report-template{ position: relative;}
 			.firefox #page11-1 ul{list-style: none outside none;    margin: 0;    padding: 20px 0 0 30px;}
+			.firefox #page11-1-new ul{list-style: none outside none;    margin: 0;    padding: 20px 0 0 30px;}
 
 
 
@@ -120,13 +124,21 @@
 			.chrome #p11{height: 1100px;   width: 930px;}
 			.chrome #p11 #mid-container11{padding-top: 30px;}
 
+			.chrome #p11-new{height: 1100px;   width: 930px;}
+			.chrome #p11-new #mid-container11{padding-top: 30px;}
+
 			.chrome #p12{height: 1100px;   width: 930px;}
 
 			.chrome .copyR{bottom: 1px;    position: absolute;}
 			.chrome .report-template{ position: relative;}
 			.chrome #page11-1 ul{list-style: none outside none;    margin: 0;    padding: 20px 0 0 30px;}
+			.chrome #page11-1-new ul{list-style: none outside none;    margin: 0;    padding: 20px 0 0 30px;}
 
-
+			#chart6-legend ul{list-style: none outside none;    margin-left: 100px; padding:10px;float:left; color:black;}
+			#chart7-legend ul{list-style: none outside none;    margin-left: 100px; padding:10px;float:left; color:white;}
+			.all-balance{margin-left: 150px;    margin-top: 115px;    position: relative; display:none;}
+			.mini-logo{position: absolute;}
+			.mini-logo li{float: left;    padding-left: 175px;    position: relative;}
 		</style>
 		<script>
 			var json1 = <?php echo json_encode($rows_score_json); ?>;

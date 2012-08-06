@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>mind_power</string>
+			<key>host</key>
+			<string>127.0.0.1</string>
+			<key>kcid</key>
+			<string>-6571177963077866617</string>
+			<key>name</key>
+			<string>Locahost_mind_power</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPTCPIPConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string>mind_power</string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>latin1</string>
+			<key>contentFilter</key>
+			<dict/>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 0}, {1051, 575}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>select leadership_id, leadership, question, leadership_percentage 
+from 
+ ( 
+ select q.id_leadership as leadership_id, question, count(question) as counter 
+from questions_answers q, testers_answers t 
+ where t.id_tester = 83
+ 	and t.id_question = q.id 
+	group by question 
+	order by 3 desc, 1, 2 
+) as results, 
+(select l.id, l.name as leadership, t.leadership_percentage 
+from testers_answers_counts t, leadership l 
+where t.id_tester = 83 
+and l.id = t.id_leadership 
+order by leadership_percentage desc 
+limit 0,4) as top3 
+where counter &gt;= 2 
+	and leadership_id in (top3.id) 
+order by leadership, 4 desc;
+
+
+select qa.`question`
+from testers_answers ta, questions_answers qa
+where
+ta.id_tester = 83
+and qa.`id` = ta.`id_question`;
+
+group by qa.`question`
+order by 2 desc;
+
+
+
+select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+where q.id_leadership = l.id 
+and q.question not in ( 	select q.question
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+and l.id in (bottom_leadership.id)
+group by l.name, question 
+order by l.name, question;
+
+
+select * from questions_answers q 
+where q.id in( 8, 365);
+
+select q.id, q.question
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id;
+
+select * from testers_answers where id_tester = 83;
+
+select * from leadership;
+</string>
+			<key>table</key>
+			<string>questions_answers</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>214</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>select leadership_id, leadership, question, leadership_percentage 
+from 
+ ( 
+ select q.id_leadership as leadership_id, question, count(question) as counter 
+from questions_answers q, testers_answers t 
+ where t.id_tester = 83
+ 	and t.id_question = q.id 
+	group by question 
+	order by 3 desc, 1, 2 
+) as results, 
+(select l.id, l.name as leadership, t.leadership_percentage 
+from testers_answers_counts t, leadership l 
+where t.id_tester = 83 
+and l.id = t.id_leadership 
+order by leadership_percentage desc 
+limit 0,4) as top3 
+where counter &gt;= 2 
+	and leadership_id in (top3.id) 
+order by leadership, 4 desc</string>
+		<string>select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+where q.id_leadership = l.id 
+and q.question not in ( 	select q.question
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+and l.id in (bottom_leadership.id)
+group by l.name, question 
+order by l.name, question</string>
+		<string>select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+where q.id_leadership = l.id 
+and q.id not in ( 	select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+and l.id in (bottom_leadership.id)
+group by l.name, question 
+order by l.name, question</string>
+		<string>id</string>
+		<string>select * from questions_answers q 
+where q.id in( 8, 365)</string>
+		<string>select q.id, q.question
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id</string>
+		<string>select * from questions_answers q 
+where q.id = 8</string>
+		<string>select * from questions_answers q 
+where q.id = 365</string>
+		<string>select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id
+
+select * from questions_answers q 
+where q.id = 365</string>
+		<string>select qa.`question`
+from testers_answers ta, questions_answers qa
+where
+ta.id_tester = 83
+and qa.`id` = ta.`id_question`</string>
+		<string>select qa.`question`
+from testers_answers ta, questions_answers qa
+where
+ta.id_tester = 83
+and qa.`id` = ta.`id_question`
+group by qa.`question`
+order by 2 desc</string>
+		<string>select qa.`question`, count(*)
+from testers_answers ta, questions_answers qa
+where
+ta.id_tester = 83
+and qa.`id` = ta.`id_question`
+group by qa.`question`
+order by 2 desc</string>
+		<string>select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id</string>
+		<string>select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+where q.id_leadership = l.id 
+and q.id not in ( 	select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+/*and l.id in (bottom_leadership.id)*/
+group by l.name, question 
+order by l.name, question</string>
+		<string>select * from leadership</string>
+		<string>select * from testers_answers where id_tester = 83</string>
+		<string>select * from testers_anwsers where id_tester = 83</string>
+		<string>select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+		, testers te
+where q.id_leadership = l.id 
+and q.id not in ( 	select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+and l.id in (bottom_leadership.id)
+and te.id = 83
+group by l.name, question 
+order by l.name, question</string>
+		<string>select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+		, testers te
+where q.id_leadership = l.id 
+and q.id not in ( 	select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+and l.id in (bottom_leadership.id)
+and te.id = 83
+group by name, question 
+order by name, question</string>
+		<string>select l.name as leadership, q.question, q.id 
+from questions_answers q, leadership l, 
+	 ( 
+		select l.id
+		from testers_answers_counts t, leadership l 
+		where t.id_tester = 83 
+			and l.id = t.id_leadership 
+		order by leadership_percentage asc 
+		limit 0,4) 
+		as bottom_leadership 
+		, tester te
+where q.id_leadership = l.id 
+and q.id not in ( 	select q.id
+					from testers_answers t, questions_answers q 
+					where t.id_tester = 83
+						and t.id_question = q.id) 
+and l.id in (bottom_leadership.id)
+and te.id = 83
+group by name, question 
+order by name, question</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.5.22</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

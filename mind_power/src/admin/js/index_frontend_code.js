@@ -23,7 +23,7 @@ function validate(form){
 
 	$('.to-validate').each(function(num1,it1){
 		it1.className = it1.className.replace('error-input', '');
-		if (it1.value.trim()==''){
+		if ($.trim(it1.value)==''){
 			it1.className = it1.className + ' error-input';
 			it1.focus();
 			alert(_mP_Form.msgs[it1.name]);

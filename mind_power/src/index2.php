@@ -1,11 +1,11 @@
-<?php include 'index_backend_code.php' ?>
+﻿<?php include 'index_backend_code.php' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>mindPower Leadership</title>
 	</head>
-		<script type="text/javascript" src="admin/js/jquery.js"></script>
+		<script type="text/javascript" src="http://182.239.48.184/~ceompowe/mp_assessement/admin/js/jquery.js"></script>
 		<style>
 			#mP #container{ margin: auto; width: 750px; background-color: #EEE9E9; font-family: Verdana, Arial, Calibri;  font-size:14px;}
 			#mP #container #header{}
@@ -45,19 +45,19 @@
 			#questions_statements .form2-li{list-style-image:none;  list-style-position:outside;  list-style-type:square;  margin-left:15px;  padding-left:1em;  text-indent:-1em;}
 			#privacy{ font-size:10px;}
 		</style>
-		<script type="text/javascript" src="admin/js/index_frontend_code.js"></script>
+		<script type="text/javascript" src="http://182.239.48.184/~ceompowe/mp_assessement/admin/js/index_frontend_code.js"></script>
 	<body>
 		<div id="mP">
 			<div id="container">
 				<div id="header">
-					<img src="images_new/logo.png" />
+					<img src="http://182.239.48.184/~ceompowe/mp_assessement/images_new/logo.png" />
 				</div>	
 				<div id="welcome">
 					<span class="welcome-gray">Welcome and thank you for taking the</span>
 					<span class="welcome-orange">mindPower Leadership&trade; assessment</span>
 				</div>
 				<div id="mid-container">
-					<form action="insert.php" method="post" name="send_questions" id="send_questions">
+					<form action="http://182.239.48.184/~ceompowe/mp_assessement/insert.php" method="post" name="send_questions" id="send_questions">
 						<div id="form1">
 							<p>
 								<span class="form1-text dark-orange">Please provide your name</span>
@@ -261,13 +261,13 @@
 						<input type="button" onClick="validate(document.send_questions);" value="Submit" style="margin-left: 320px;" />
 					</form>
 				</div>
-				<div id="privacy"><a href="privacy.html" target="_blank">Click here to view privacy statement</a></div>
+				<div id="privacy"><a href="http://182.239.48.184/~ceompowe/mp_assessement/privacy.html" target="_blank">Click here to view privacy statement</a></div>
 				<div id="footer">
 					<!-- <p>
 						<span class="form3-text black">Thank you for your participation. The mindPower Leadership™ self-assessment report will be distributed to you in due course.</span>
 					</p> -->
 					<div id="copy-right">
-						<img src="images_new/copyright.gif" />
+						<img src="http://182.239.48.184/~ceompowe/mp_assessement/images_new/copyright.gif" />
 					</div>
 				</div>
 			</div>

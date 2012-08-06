@@ -1,0 +1,2 @@
+[18-Jun-2012 23:34:50] PHP Parse error:  syntax error, unexpected '=' in /home/ceompowe/public_html/mp_assessement/admin/show_tester_report.php on line 12
+[18-Jun-2012 23:39:04] PHP Warning:  mysql_close(): 3 is not a valid MySQL-Link resource in /home/ceompowe/public_html/mp_assessement/DB.php on line 40

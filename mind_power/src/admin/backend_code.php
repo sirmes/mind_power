@@ -63,8 +63,7 @@ while($r = mysql_fetch_assoc($strategic_management)) {
 }
 
 //================== Bring tester data ===============
-//$query = "select t.id as tester_id, title, t.name, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".				// Commented by Plato 2012-06-18
-$query = "select t.id as tester_id, title, t.name, t.given_names, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".	// Added by Plato 2012-06-18
+$query = "select t.id as tester_id, title, t.name, t.given_names, email, t.company_name company, date_format(created_date, '%M %D, %Y') created_date".
 			" from testers t where t.id = $tester_id";
 $tester = $DB->qry($query);
 
@@ -102,7 +101,7 @@ while($r = mysql_fetch_assoc($tester_answers_counts_grouped_by_leadership)) {
 	$answers_counts_grouped_by_ledership_json[] = $r;
 }
 
-//================== Being all questions(statements) that were submitted ===============
+//================== Being all statements that were submitted ===============
 $query = "select l.name leadership, q.question ".
 			"from testers_answers t, questions_answers q, leadership l ".
 			"where t.id_tester = $tester_id ".
@@ -118,7 +117,7 @@ while($r = mysql_fetch_assoc($tester_answers_submitted)) {
 	$answers_answers_submitted_json[] = $r;
 }
 
-//================== Bring all questions(statements) that were NOT submitted ===============
+//================== Bring all statements that were NOT submitted ===============
 $query = "select l.name as leadership, q.question, q.id ".
 "from questions_answers q, leadership l, ".
 " ( ".
@@ -129,8 +128,8 @@ $query = "select l.name as leadership, q.question, q.id ".
 "order by leadership_percentage asc ".
 "limit 0,4) as bottom_leadership ".
 "where q.id_leadership = l.id ".
-"and q.id not in ( ".
-"select q.id ".
+"and q.question not in ( ".
+"select q.question ".
 "from testers_answers t, questions_answers q ".
 "where t.id_tester = $tester_id ".
 "	and t.id_question = q.id) ".
@@ -146,7 +145,7 @@ while($r = mysql_fetch_assoc($tester_answers_not_submitted)) {
 	$answers_answers_not_submitted_json[] = $r;
 }
 
-//================== Bring all answers picked twice ===============
+//================== Bring all statements picked twice ===============
 $query = "select leadership_id, leadership, question, leadership_percentage ".
 "from ". 
 " ( ".
@@ -165,7 +164,7 @@ $query = "select leadership_id, leadership, question, leadership_percentage ".
 "limit 0,4) as top3 ".
 "where counter >= 2 ".
 "	and leadership_id in (top3.id) ".
-"order by 4 desc";
+"order by leadership, 4 desc";
 
 $tester_answers_picked_twiced = $DB->qry($query);
 
@@ -174,13 +173,52 @@ while($r = mysql_fetch_assoc($tester_answers_picked_twiced)) {
 	$answers_answers_picked_twice_json[] = $r;
 }
 
+print_r($answers_answers_picked_twice_json);
+
+$new_array = array();
+$last_leadership_id = 0;
+$counter = 0;
+$last_percentage = 0;
+foreach ($answers_answers_picked_twice_json as $current_record) {
+	
+	$leadership_id = $current_record["leadership_id"];
+
+	//First time or move to the next leadership
+	if ($last_leadership_id == 0 || $last_leadership_id != $leadership_id) {
+		$counter = 1;
+		$last_leadership_id = $leadership_id;
+	}
+	else if ($last_leadership_id == $leadership_id) {
+		//Is still the same leadership
+		$counter = $counter + 1;
+	}
+	
+	if ($counter <= 3) {
+		//Just put record into the new array
+		$new_array[] = $current_record;
+	}
+	else if ($counter == 4) {
+		
+		$temp_percentage = $current_record["leadership_percentage"];
+		if (round($temp_percentage, 2) == round($last_percentage, 2)) {
+			//Is tied so needs to go into the array too
+			$new_array[] = $current_record;			
+		}
+	}
+
+	$last_percentage = $current_record["leadership_percentage"];
+}
+
+print "<br>===============<br>";
+print_r($new_array);
+
 //================== Bring top 3/4 ===============
 $query = "select l.name as leadership, t.leadership_percentage ".
 		"from testers_answers_counts t, leadership l ".
 		"where t.id_tester = $tester_id ".
 		"	and l.id = t.id_leadership ".
 		"order by leadership_percentage desc ".
-		"limit 0,4";
+		"limit 0,3";
 
 $top_3 = $DB->qry($query);
 
@@ -195,7 +233,7 @@ $query = "select l.name as leadership, t.leadership_percentage ".
 		"where t.id_tester = $tester_id ".
 		"	and l.id = t.id_leadership ".
 		"order by leadership_percentage asc ".
-		"limit 0,4";
+		"limit 0,3";
 
 $bottom_3 = $DB->qry($query);
 
